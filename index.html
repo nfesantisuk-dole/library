@@ -728,7 +728,6 @@
     async function handleBorrow(event) {
       event.preventDefault();
       
-      // ✅ ส่วนที่แก้ไข: ดึงค่าจากช่องค้นหา และแยก ID ออกมา (เพราะค่าอาจเป็น "M001 : Somchai")
       let memberIdInput = document.getElementById('borrowMemberId').value;
       let memberId = memberIdInput;
       
@@ -756,7 +755,7 @@
           if (liveBook && parseInt(liveBook.available) > 0) {
               const borrow = { 
                   id: 'BR' + Date.now() + Math.floor(Math.random() * 1000), 
-                  memberId: memberId, // ใช้ ID ที่แยกออกมาแล้ว
+                  memberId: memberId, 
                   bookId: liveBook.id, 
                   bookTitle: liveBook.title, 
                   borrowDate: document.getElementById('borrowDate').value, 
@@ -815,6 +814,74 @@
               updateAllViews(); showToast('คืนหนังสือสำเร็จ!', 'success');
           }
       });
+    }
+
+    // ✅ NEW: ฟังก์ชันแก้ไขประวัติ
+    function editHistory(recordId) {
+        const record = borrowRecords.find(r => r.id === recordId);
+        if (!record) return;
+
+        // ดึงชื่อสมาชิกมาแสดง
+        const member = members.find(m => m.id === record.memberId);
+        const memberName = member ? member.name : '-';
+
+        const formHtml = `
+            <input type="hidden" id="editHistoryId" value="${record.id}">
+            <div class="form-layout">
+                <div class="input-group"><label>รหัสรายการ (แก้ไขไม่ได้)</label> <input type="text" value="${record.id}" disabled></div>
+                <div class="input-group"><label>ผู้ยืม (แก้ไขไม่ได้)</label> <input type="text" value="${memberName}" disabled></div>
+                <div class="input-group"><label>หนังสือ (แก้ไขไม่ได้)</label> <input type="text" value="${record.bookTitle}" disabled></div>
+                
+                <div class="input-group"><label>วันที่ยืม (แก้ไขได้) *</label> <input type="date" id="editBorrowDate" value="${record.borrowDate}" required></div>
+                <div class="input-group"><label>กำหนดคืน (แก้ไขได้) *</label> <input type="date" id="editDueDate" value="${record.dueDate}" required></div>
+                
+                <div class="input-group" style="background: #e3f2fd; padding: 10px; border-radius: 8px;">
+                    <label style="color: #0d47a1;">วันที่คืน (ลงเมื่อคืนหนังสือแล้ว)</label> 
+                    <input type="date" id="editReturnDate" value="${record.returnDate || ''}">
+                    <p style="font-size: 0.8em; color: #666; margin-top: 5px;">* หากใส่วันที่คืน ระบบจะเปลี่ยนสถานะเป็น "คืนแล้ว" อัตโนมัติ</p>
+                </div>
+            </div>
+        `;
+        showEditModal(`✏️ แก้ไขประวัติการยืม`, formHtml, updateHistoryDetails);
+    }
+
+    async function updateHistoryDetails() {
+        const id = document.getElementById('editHistoryId').value;
+        const oldRecord = borrowRecords.find(r => r.id === id);
+        
+        // อัปเดตข้อมูลใหม่
+        const updatedRecord = {
+            ...oldRecord,
+            borrowDate: document.getElementById('editBorrowDate').value,
+            dueDate: document.getElementById('editDueDate').value,
+            returnDate: document.getElementById('editReturnDate').value
+        };
+
+        // Logic ปรับสถานะอัตโนมัติตามวันที่คืน
+        if (updatedRecord.returnDate) {
+            updatedRecord.status = 'returned';
+        } else {
+            updatedRecord.status = 'borrowed'; // ถ้าลบวันคืนออก ให้กลับเป็นสถานะยืม
+        }
+
+        // อัปเดตหน้าจอทันที (Optimistic update)
+        const index = borrowRecords.findIndex(r => r.id === id);
+        if (index !== -1) borrowRecords[index] = updatedRecord;
+
+        showLoading();
+        const success = await saveToSheets('borrows', updatedRecord);
+        hideLoading();
+
+        if (success) {
+            updateAllViews();
+            showToast('แก้ไขข้อมูลสำเร็จ', 'success');
+            return true;
+        } else {
+            // ถ้าพังให้คืนค่าเดิม
+            if (index !== -1) borrowRecords[index] = oldRecord;
+            updateAllViews();
+            return false;
+        }
     }
 
     function editBook(bookId) {
@@ -939,7 +1006,24 @@
         const member = members.find(m => m.id === record.memberId);
         const memberName = member ? member.name : '-';
 
-        return `<tr><td>${record.memberId}</td><td>${memberName}</td><td>${record.bookId}</td><td>${record.bookTitle}</td><td>${record.borrowDate}</td><td>${record.dueDate}</td><td>${record.returnDate || '-'}</td><td><span class="status-badge ${statusClass}">${statusBadge}</span></td><td><div class="action-button-group">${record.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${record.id}')">📥 คืน</button>` : ''}</div></td></tr>`;
+        // ✅ เพิ่มปุ่มแก้ไขใน Action Group
+        return `
+          <tr>
+            <td>${record.memberId}</td>
+            <td>${memberName}</td>
+            <td>${record.bookId}</td>
+            <td>${record.bookTitle}</td>
+            <td>${record.borrowDate}</td>
+            <td>${record.dueDate}</td>
+            <td>${record.returnDate || '-'}</td>
+            <td><span class="status-badge ${statusClass}">${statusBadge}</span></td>
+            <td>
+              <div class="action-button-group">
+                <button class="button-secondary" onclick="editHistory('${record.id}')">✏️ แก้ไข</button>
+                ${record.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${record.id}')">📥 คืน</button>` : ''}
+              </div>
+            </td>
+          </tr>`;
       }).join('');
     }
 
