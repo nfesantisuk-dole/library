@@ -201,7 +201,12 @@
      <h2>📖 ยืมหนังสือ (ผู้ดูแลระบบ)</h2>
      <form id="borrowForm" onsubmit="handleBorrow(event)">
       <div class="form-layout">
-       <div class="input-group"><label for="borrowMemberId">รหัสสมาชิก *</label> <input type="text" id="borrowMemberId" required placeholder="M001"></div>
+       <div class="input-group">
+           <label for="borrowMemberId">ค้นหาสมาชิก (พิมพ์ชื่อหรือรหัส) *</label> 
+           <input type="text" id="borrowMemberId" list="memberOptions" required placeholder="พิมพ์ชื่อหรือรหัสเพื่อค้นหา...">
+           <datalist id="memberOptions"></datalist>
+       </div>
+
        <div class="input-group"><label for="borrowDate">วันที่ยืม *</label> <input type="date" id="borrowDate" required></div>
        <div class="input-group"><label for="dueDate">กำหนดคืน (180 วัน) *</label> <input type="date" id="dueDate" required></div>
        
@@ -335,7 +340,7 @@
    <div id="history" class="content-section">
     <div class="data-table-wrapper">
      <h2 style="margin-bottom: 20px;">📋 ประวัติการยืม-คืน</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหา..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV</button></div>
+     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหา..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV (มีชื่อผู้ยืม)</button></div>
      <table class="data-table">
       <thead><tr><th>รหัสสมาชิก</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
       <tbody id="historyTableBody"></tbody>
@@ -356,13 +361,12 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRS1iie8d2Bj-jxh6n2Y7XcZBoVWOoNxtXIvA6p3rjyx_DnhUyUWR3TqmL7GYwD5Ybiw/exec';
     
     // ⚠️ CONFIGURATION: Password & Loan Days
-    const ADMIN_PASSWORD = "admin"; // รหัสผ่านแอดมิน
+    const ADMIN_PASSWORD = "admin1250240004"; // รหัสผ่านแอดมิน
     const LOAN_DAYS = 180; // ระยะเวลายืม 180 วัน
     
     let books = [];
     let members = [];
     let borrowRecords = [];
-    // ✅ NEW: ตัวแปรเก็บรายการตะกร้าสินค้า
     let borrowCart = []; 
     
     let charts = {};
@@ -572,9 +576,18 @@
       if (sectionId === 'dashboard') updateAvailableBooksListPublic();
     }
 
+    // ✅ เพิ่มฟังก์ชันอัปเดตตัวเลือกสมาชิก (Datalist)
+    function updateMemberOptions() {
+        const datalist = document.getElementById('memberOptions');
+        if(datalist) {
+            datalist.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join('');
+        }
+    }
+
     function updateAllViews() {
       updateDashboardStats();
       updateAvailableBooksListPublic();
+      updateMemberOptions(); // เรียกใช้ที่นี่เพื่อให้ข้อมูลอัปเดตเสมอ
       
       if (isAdmin) {
           updateCharts();
@@ -657,7 +670,7 @@
       btn.disabled = false; btn.textContent = '➕ เพิ่มสมาชิก';
     }
 
-    // ---------------------- NEW MULTI-BORROW LOGIC ----------------------
+    // ---------------------- MULTI-BORROW LOGIC ----------------------
 
     function addToCart() {
         const input = document.getElementById('borrowBookIdInput');
@@ -665,25 +678,21 @@
         
         if (!bookId) return;
 
-        // 1. ตรวจสอบว่ามีหนังสือในระบบไหม
         const book = books.find(b => b.id === bookId);
         if (!book) {
             showToast('ไม่พบรหัสหนังสือในระบบ', 'warning');
             return;
         }
 
-        // 2. ตรวจสอบว่าหนังสืออยู่ในตะกร้าแล้วหรือยัง
         const alreadyInCart = borrowCart.filter(item => item.id === bookId).length;
         
-        // 3. ตรวจสอบว่าหนังสือพอให้ยืมไหม (จำนวนที่มี - จำนวนในตะกร้า)
         if (parseInt(book.available) - alreadyInCart <= 0) {
             showToast('หนังสือเล่มนี้หมดแล้ว (หรืออยู่ในตะกร้าครบตามจำนวนที่มีแล้ว)', 'warning');
             return;
         }
 
-        // เพิ่มลงตะกร้า
         borrowCart.push(book);
-        input.value = ''; // เคลียร์ช่อง
+        input.value = ''; 
         input.focus();
         updateCartTable();
     }
@@ -719,10 +728,17 @@
     async function handleBorrow(event) {
       event.preventDefault();
       
-      const memberId = document.getElementById('borrowMemberId').value;
+      // ✅ ส่วนที่แก้ไข: ดึงค่าจากช่องค้นหา และแยก ID ออกมา (เพราะค่าอาจเป็น "M001 : Somchai")
+      let memberIdInput = document.getElementById('borrowMemberId').value;
+      let memberId = memberIdInput;
+      
+      if (memberIdInput.includes(':')) {
+          memberId = memberIdInput.split(':')[0].trim();
+      }
+
       const member = members.find(m => m.id === memberId);
       
-      if (!member) { showToast('ไม่พบรหัสสมาชิก', 'warning'); return; }
+      if (!member) { showToast('ไม่พบรหัสสมาชิก (กรุณาเลือกจากรายการหรือพิมพ์รหัสให้ถูกต้อง)', 'warning'); return; }
       if (borrowCart.length === 0) { showToast('กรุณาเพิ่มรายการหนังสืออย่างน้อย 1 เล่ม', 'warning'); return; }
 
       const btn = document.getElementById('borrowSubmitBtn');
@@ -731,18 +747,16 @@
       let successCount = 0;
       let failCount = 0;
 
-      // Loop ยืมทีละเล่ม
       for (let i = 0; i < borrowCart.length; i++) {
           const bookInCart = borrowCart[i];
           btn.textContent = `⏳ กำลังบันทึก... (${i + 1}/${borrowCart.length})`;
           
-          // ตรวจสอบสถานะล่าสุดอีกครั้ง (เผื่อมีคนยืมตัดหน้า)
           const liveBook = books.find(b => b.id === bookInCart.id);
           
           if (liveBook && parseInt(liveBook.available) > 0) {
               const borrow = { 
-                  id: 'BR' + Date.now() + Math.floor(Math.random() * 1000), // Unique ID
-                  memberId: memberId, 
+                  id: 'BR' + Date.now() + Math.floor(Math.random() * 1000), 
+                  memberId: memberId, // ใช้ ID ที่แยกออกมาแล้ว
                   bookId: liveBook.id, 
                   bookTitle: liveBook.title, 
                   borrowDate: document.getElementById('borrowDate').value, 
@@ -767,22 +781,20 @@
           }
       }
 
-      // สรุปผล
       updateAllViews();
       if (failCount === 0) {
           showToast(`ยืมหนังสือสำเร็จครบ ${successCount} เล่ม!`, 'success');
-          borrowCart = []; // เคลียร์ตะกร้า
+          borrowCart = []; 
           updateCartTable();
-          event.target.reset(); // รีเซ็ตฟอร์ม
+          event.target.reset(); 
           
-          // ตั้งวันที่ใหม่
           const today = new Date().toISOString().split('T')[0];
           const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + LOAN_DAYS);
           document.getElementById('borrowDate').value = today; 
           document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
       } else {
           showToast(`ยืมสำเร็จ ${successCount} เล่ม, ล้มเหลว ${failCount} เล่ม (อาจหนังสือหมด)`, 'warning');
-          borrowCart = []; // เคลียร์ตะกร้าเพื่อให้เริ่มใหม่
+          borrowCart = []; 
           updateCartTable();
       }
 
@@ -947,11 +959,27 @@
 
     function exportHistory() {
       if (borrowRecords.length === 0) { showToast('ไม่มีข้อมูล', 'warning'); return; }
-      const headers = ['รหัสสมาชิก', 'รหัสหนังสือ', 'ชื่อหนังสือ', 'วันที่ยืม', 'กำหนดคืน', 'วันที่คืน', 'สถานะ'];
+      // ✅ ส่วนที่แก้ไข: เพิ่มคอลัมน์ "ชื่อผู้ยืม"
+      const headers = ['รหัสสมาชิก', 'ชื่อผู้ยืม', 'รหัสหนังสือ', 'ชื่อหนังสือ', 'วันที่ยืม', 'กำหนดคืน', 'วันที่คืน', 'สถานะ'];
       const csvContent = borrowRecords.map(record => {
         let status = record.status === 'returned' ? 'คืนแล้ว' : (new Date(record.dueDate) < new Date() ? 'เกินกำหนด' : 'กำลังยืม');
-        return [record.memberId, record.bookId, `"${record.bookTitle.replace(/"/g, '""')}"`, record.borrowDate, record.dueDate, record.returnDate || '', status].join(',');
+        
+        // ค้นหาชื่อสมาชิก
+        const member = members.find(m => m.id === record.memberId);
+        const memberName = member ? member.name : '-';
+
+        return [
+          record.memberId,
+          `"${memberName}"`, // ใส่ชื่อผู้ยืม
+          record.bookId, 
+          `"${record.bookTitle.replace(/"/g, '""')}"`, 
+          record.borrowDate, 
+          record.dueDate, 
+          record.returnDate || '', 
+          status
+        ].join(',');
       }).join('\n');
+      
       const blob = new Blob(["\ufeff", headers.join(',') + '\n' + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob); link.download = `library_history_${new Date().toISOString().split('T')[0]}.csv`;
