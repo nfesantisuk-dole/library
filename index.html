@@ -252,7 +252,7 @@
    <div id="return" class="content-section">
     <div class="card-container">
      <h2>📥 คืนหนังสือ</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchBorrowed" placeholder="🔍 ค้นหารหัสสมาชิกหรือรหัสหนังสือ..." oninput="searchBorrowedBooks()"></div>
+     <div class="search-filters"><input type="text" class="search-input" id="searchBorrowed" placeholder="🔍 ค้นหาชื่อผู้ยืม, รหัสสมาชิก หรือหนังสือ..." oninput="searchBorrowedBooks()"></div>
      <div id="borrowedBooksList"></div>
     </div>
    </div>
@@ -340,9 +340,9 @@
    <div id="history" class="content-section">
     <div class="data-table-wrapper">
      <h2 style="margin-bottom: 20px;">📋 ประวัติการยืม-คืน</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหา..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV (มีชื่อผู้ยืม)</button></div>
+     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหาด้วยชื่อ หรือรหัส..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV (มีชื่อผู้ยืม)</button></div>
      <table class="data-table">
-      <thead><tr><th>รหัสสมาชิก</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
+      <thead><tr><th>รหัสสมาชิก</th><th>ชื่อผู้ยืม</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
       <tbody id="historyTableBody"></tbody>
      </table>
     </div>
@@ -911,7 +911,15 @@
       const searchTerm = document.getElementById('searchHistory')?.value.toLowerCase() || '';
       const filterStatus = document.getElementById('filterStatus')?.value || '';
       let filteredHistory = borrowRecords.filter(record => {
-        const matchSearch = record.memberId.toLowerCase().includes(searchTerm) || record.bookId.toLowerCase().includes(searchTerm) || record.bookTitle.toLowerCase().includes(searchTerm);
+        // ✅ เพิ่มการค้นหาด้วยชื่อสมาชิก
+        const member = members.find(m => m.id === record.memberId);
+        const memberName = member ? member.name.toLowerCase() : '';
+
+        const matchSearch = record.memberId.toLowerCase().includes(searchTerm) || 
+                            record.bookId.toLowerCase().includes(searchTerm) || 
+                            record.bookTitle.toLowerCase().includes(searchTerm) ||
+                            memberName.includes(searchTerm); // เพิ่มเงื่อนไขค้นหาชื่อ
+        
         let matchStatus = true;
         if (filterStatus === 'borrowed') matchStatus = record.status === 'borrowed' && new Date(record.dueDate) >= new Date();
         else if (filterStatus === 'returned') matchStatus = record.status === 'returned';
@@ -926,7 +934,12 @@
         if (record.status === 'returned') { statusBadge = 'คืนแล้ว'; statusClass = 'status-returned'; }
         else if (new Date(record.dueDate) < new Date()) { statusBadge = 'เกินกำหนด'; statusClass = 'status-overdue'; }
         else { statusBadge = 'กำลังยืม'; statusClass = 'status-borrowed'; }
-        return `<tr><td>${record.memberId}</td><td>${record.bookId}</td><td>${record.bookTitle}</td><td>${record.borrowDate}</td><td>${record.dueDate}</td><td>${record.returnDate || '-'}</td><td><span class="status-badge ${statusClass}">${statusBadge}</span></td><td><div class="action-button-group">${record.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${record.id}')">📥 คืน</button>` : ''}</div></td></tr>`;
+        
+        // ✅ เพิ่มการแสดงผลชื่อผู้ยืมในตาราง
+        const member = members.find(m => m.id === record.memberId);
+        const memberName = member ? member.name : '-';
+
+        return `<tr><td>${record.memberId}</td><td>${memberName}</td><td>${record.bookId}</td><td>${record.bookTitle}</td><td>${record.borrowDate}</td><td>${record.dueDate}</td><td>${record.returnDate || '-'}</td><td><span class="status-badge ${statusClass}">${statusBadge}</span></td><td><div class="action-button-group">${record.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${record.id}')">📥 คืน</button>` : ''}</div></td></tr>`;
       }).join('');
     }
 
@@ -938,12 +951,28 @@
       container.innerHTML = availableBooks.map(book => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${book.title}</div><div class="book-card-author">${book.author}</div></div><span class="status-badge status-available">${book.available} เล่ม</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${book.id}</div></div></div>`).join('');
     }
 
+    // ✅ ปรับปรุงฟังก์ชันคืนหนังสือให้ค้นหาด้วยชื่อได้
     function updateBorrowedBooksList() {
       const searchTerm = document.getElementById('searchBorrowed')?.value.toLowerCase() || '';
-      let borrows = borrowRecords.filter(b => b.status === 'borrowed' && (b.memberId.toLowerCase().includes(searchTerm) || b.bookId.toLowerCase().includes(searchTerm) || b.bookTitle.toLowerCase().includes(searchTerm)));
+      let borrows = borrowRecords.filter(b => b.status === 'borrowed');
+      
+      borrows = borrows.filter(borrow => {
+        // ค้นหาชื่อสมาชิกเพื่อนำมาตรวจสอบ
+        const member = members.find(m => m.id === borrow.memberId);
+        const memberName = member ? member.name.toLowerCase() : '';
+        
+        return (
+          borrow.memberId.toLowerCase().includes(searchTerm) || 
+          borrow.bookId.toLowerCase().includes(searchTerm) || 
+          borrow.bookTitle.toLowerCase().includes(searchTerm) ||
+          memberName.includes(searchTerm) // ✅ เพิ่มการค้นหาด้วยชื่อ
+        );
+      });
+
       borrows.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       const container = document.getElementById('borrowedBooksList');
       if (borrows.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบรายการยืม</h3></div>'; return; }
+      
       container.innerHTML = borrows.map(borrow => {
         const member = members.find(m => m.id === borrow.memberId);
         const isOverdue = new Date(borrow.dueDate) < new Date();
