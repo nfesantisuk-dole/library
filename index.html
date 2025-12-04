@@ -12,349 +12,368 @@
 
   <style>
     /* =========================================
-       1. CORE SETTINGS & RESET
+       CORE & LAYOUT
        ========================================= */
     body {
         box-sizing: border-box;
         font-family: 'Sarabun', sans-serif;
         background: linear-gradient(135deg, #e8f5e9 0%, #fff3e0 100%);
         color: #333;
-        -webkit-tap-highlight-color: transparent; /* ลบสีไฮไลท์เวลาแตะบนมือถือ */
-        overscroll-behavior-y: none; /* ป้องกันการดึงหน้าจอบนมือถือ */
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior-y: none;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box;
+    }
+    html, body { height: 100%; width: 100%;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; width: 100%; }
-
-    /* =========================================
-       2. LAYOUT STRUCTURE
-       ========================================= */
     .main-wrapper {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 15px;
-        padding-bottom: 90px; /* เว้นที่ด้านล่างสำหรับเมนูมือถือ */
+        width: 100%; max-width: 1200px; margin: 0 auto;
+        padding: 15px; padding-bottom: 90px;
     }
 
     /* =========================================
-       3. HEADER SECTION
+       HEADER
        ========================================= */
     .app-header {
         background: linear-gradient(135deg, #66bb6a 0%, #ffb74d 100%);
-        padding: 20px;
-        border-radius: 20px;
+        padding: 20px; border-radius: 20px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        margin-bottom: 20px;
-        position: relative;
+        text-align: center; margin-bottom: 20px; position: relative;
+    }
+    .app-header h1 { color: #1b5e20; font-size: 1.8em; font-weight: 700; margin-bottom: 5px; line-height: 1.3;
+    }
+    .app-header p { color: #2e7d32; font-size: 1em; opacity: 0.9;
     }
 
-    .app-header h1 {
-        color: #1b5e20;
-        font-size: 1.8em;
-        font-weight: 700;
-        margin-bottom: 5px;
-        line-height: 1.3;
-    }
-
-    .app-header p {
-        color: #2e7d32;
-        font-size: 1em;
-        opacity: 0.9;
-    }
-
-    /* ปุ่ม Login/Logout มุมขวาบน */
     .login-btn {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8em;
-        font-weight: bold;
-        color: #2e7d32;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        border: none;
-        cursor: pointer;
+        position: absolute; top: 15px; right: 15px;
+        background: rgba(255, 255, 255, 0.9); padding: 6px 12px;
+        border-radius: 20px; font-size: 0.8em; font-weight: bold;
+        color: #2e7d32; border: none; cursor: pointer;
         z-index: 10;
-        transition: all 0.3s;
     }
 
     .connection-status {
-        display: inline-block;
-        padding: 4px 12px;
+        display: inline-block; padding: 4px 12px;
         border-radius: 20px;
-        font-size: 0.85em;
-        font-weight: 600;
-        margin-top: 10px;
+        font-size: 0.85em; font-weight: 600; margin-top: 10px;
         background: rgba(255,255,255,0.8);
     }
-    .status-connected { color: #2e7d32; background: #c8e6c9; }
+    .status-connected { color: #2e7d32; background: #c8e6c9;
+    }
     .status-disconnected { color: #c62828; background: #ffcdd2; }
-    .status-syncing { color: #f57f17; background: #fff9c4; }
-
-    /* =========================================
-       4. NAVIGATION (Responsive)
-       ========================================= */
-    .nav-container {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
+    .status-syncing { color: #f57f17; background: #fff9c4;
     }
 
+    /* =========================================
+       NAVIGATION
+       ========================================= */
+    .nav-container { display: flex;
+        gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .nav-button {
         flex: 1;
-        min-width: 120px;
-        padding: 12px;
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        font-size: 0.95em;
-        font-weight: 600;
-        color: #555;
+        min-width: 120px; padding: 12px;
+        background: white; border: 1px solid #e0e0e0; border-radius: 12px;
+        font-size: 0.95em; font-weight: 600; color: #555;
         cursor: pointer;
-        transition: all 0.2s;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        font-family: 'Sarabun', sans-serif;
+        transition: all 0.2s; font-family: 'Sarabun';
     }
-
-    .nav-button:hover {
-        background: #f1f8e9;
-        transform: translateY(-2px);
-    }
-
     .nav-button.active {
         background: linear-gradient(135deg, #81c784 0%, #ffcc80 100%);
-        color: #1b5e20;
-        border: none;
-        box-shadow: 0 4px 10px rgba(102, 187, 106, 0.2);
+        color: #1b5e20; border: none;
     }
-
-    /* Admin Visibility Logic */
-    .admin-only { display: none !important; }
+    .admin-only { display: none !important;
+    }
     .show-admin .admin-only { display: block !important; }
-    /* Fix for flex items when visible */
-    .show-admin .nav-button.admin-only { display: block !important; } 
+    .show-admin .nav-button.admin-only { display: block !important;
+    }
 
     /* =========================================
-       5. DASHBOARD & CARDS
+       DASHBOARD & CARDS
        ========================================= */
-    .content-section { display: none; animation: fadeIn 0.3s ease; }
-    .content-section.active { display: block; }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+    .content-section { display: none;
+        animation: fadeIn 0.3s ease; }
+    .content-section.active { display: block;
     }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0);
+    } }
 
     .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 15px; margin-bottom: 20px;
     }
-
     .dashboard-card {
         background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        text-align: center;
-        transition: transform 0.3s;
+        padding: 20px; border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center;
     }
-    .dashboard-card:hover { transform: translateY(-3px); }
-
-    .dashboard-card h3 { font-size: 0.9em; color: #2e7d32; margin-bottom: 5px; font-weight: 500; }
-    .dashboard-card .stat-number { font-size: 2em; font-weight: 700; color: #1b5e20; }
-    .dashboard-card .stat-label { color: #66bb6a; font-size: 0.8em; }
-
+    .dashboard-card .stat-number { font-size: 2em;
+        font-weight: 700; color: #1b5e20; }
     .card-container {
         background: white;
-        padding: 20px;
-        border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        padding: 20px; border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;
     }
     .card-container h2 {
-        color: #1b5e20;
-        margin-bottom: 15px;
-        font-size: 1.3em;
-        border-bottom: 2px solid #e8f5e9;
-        padding-bottom: 10px;
+        color: #1b5e20; margin-bottom: 15px; font-size: 1.3em;
+        border-bottom: 2px solid #e8f5e9; padding-bottom: 10px;
     }
 
     /* =========================================
-       6. CHARTS (Fix: Sliding Down Bug)
-       ========================================= */
-    .chart-wrapper {
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        margin-bottom: 30px;
-        
-        /* FIX: Lock Height to prevent infinite growth */
-        height: 350px !important; 
-        position: relative !important;
-        overflow: hidden !important; 
-        display: block;
-    }
-
-    .chart-wrapper canvas {
-        width: 100% !important;
-        height: 100% !important;
-        max-height: 310px;
-        display: block;
-    }
-
-    .chart-wrapper h2 { color: #1b5e20; margin-bottom: 10px; font-size: 1.2em; }
-
-    /* =========================================
-       7. FORMS & INPUTS
+       FORMS & BUTTONS
        ========================================= */
     .form-layout {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
+        gap: 15px; margin-bottom: 20px;
     }
-
-    .input-group { display: flex; flex-direction: column; }
-    .input-group label { color: #2e7d32; font-weight: 600; margin-bottom: 6px; font-size: 0.95em; }
+    .input-group { display: flex; flex-direction: column;
+    }
+    .input-group label { color: #2e7d32; font-weight: 600; margin-bottom: 6px; font-size: 0.95em;
+    }
     .input-group input, .input-group select, .input-group textarea {
         padding: 12px;
-        border: 2px solid #c8e6c9;
-        border-radius: 10px;
-        font-size: 1em;
-        font-family: 'Sarabun';
-        background: #fafafa;
-        width: 100%;
-        transition: border-color 0.3s;
+        border: 2px solid #c8e6c9; border-radius: 10px;
+        font-size: 1em; font-family: 'Sarabun'; background: #fafafa; width: 100%;
     }
-    .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-        outline: none;
-        border-color: #66bb6a;
-        background: white;
-    }
-
-    /* =========================================
-       8. BUTTONS
-       ========================================= */
     .button-primary {
         background: linear-gradient(135deg, #66bb6a 0%, #ffb74d 100%);
-        color: #1b5e20;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        cursor: pointer;
-        font-size: 1em;
-        box-shadow: 0 4px 10px rgba(102,187,106,0.3);
-        transition: all 0.3s;
-        font-family: 'Sarabun';
+        color: #1b5e20; padding: 12px 25px; border: none; border-radius: 10px;
+        font-weight: 600; cursor: pointer; font-size: 1em; width: 100%; font-family: 'Sarabun';
     }
-    .button-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 187, 106, 0.4); }
-    .button-secondary { background: #e8f5e9; color: #2e7d32; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-family: 'Sarabun'; }
-    .button-danger { background: #ffcdd2; color: #c62828; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-family: 'Sarabun'; }
-    .button-success { background: #c8e6c9; color: #2e7d32; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-family: 'Sarabun'; }
+    .button-secondary, .button-danger, .button-success {
+        padding: 8px 16px; border-radius: 8px;
+        border: none; font-weight: 600; cursor: pointer; font-family: 'Sarabun';
+    }
+    .button-secondary { background: #e8f5e9; color: #2e7d32;
+    }
+    .button-danger { background: #ffcdd2; color: #c62828; }
+    .button-success { background: #c8e6c9; color: #2e7d32;
+    }
 
     /* =========================================
-       9. TABLES & LISTS
+       TABLES (Standard View)
        ========================================= */
     .data-table-wrapper {
         background: white;
-        border-radius: 16px;
-        overflow-x: auto;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        padding: 15px;
+        border-radius: 16px; padding: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow-x: auto;
     }
-    .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
-    .data-table th, .data-table td { padding: 10px; font-size: 0.9em; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
-    .data-table th { background-color: #f1f8e9; color: #33691e; }
-    .data-table tr:hover { background: #f9fbe7; }
-
-    .book-card {
-        background: white;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        margin-bottom: 12px;
-        border: 1px solid #eee;
+    .data-table { width: 100%;
+        border-collapse: collapse; min-width: 800px; }
+    .data-table th, .data-table td { padding: 12px; font-size: 0.95em; text-align: left;
+        border-bottom: 1px solid #eee; }
+    .data-table th { background-color: #f1f8e9; color: #33691e; white-space: nowrap;
     }
-    .book-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .book-card-title { font-size: 1.1em; font-weight: 600; color: #1b5e20; }
-    .book-card-author { font-size: 0.9em; color: #66bb6a; }
-    .book-card-info { display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.85em; color: #555; }
-
-    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600; }
-    .status-available { background: #c8e6c9; color: #2e7d32; }
-    .status-borrowed { background: #fff9c4; color: #f57f17; }
-    .status-overdue { background: #ffcdd2; color: #c62828; }
-    .status-returned { background: #b3e5fc; color: #01579b; }
 
     /* =========================================
-       10. UTILS (Modal, Toast, Search)
-       ========================================= */
-    .search-filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-    .search-input { flex: 1; padding: 10px; border: 2px solid #c8e6c9; border-radius: 10px; font-family: 'Sarabun'; }
-
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9998; padding: 20px; }
-    .modal-content { background: white; padding: 25px; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
-    .modal-header { color: #1b5e20; font-size: 1.4em; font-weight: 700; margin-bottom: 15px; }
-    .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-
-    .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center; }
-    .loading-spinner { width: 50px; height: 50px; border: 5px solid #e8f5e9; border-top-color: #66bb6a; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 10px; color: white; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; animation: slideIn 0.3s ease-out; }
-    .toast-success { background: #66bb6a; }
-    .toast-error { background: #ef5350; }
-    .toast-warning { background: #ffa726; }
-    @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-    .empty-message { text-align: center; padding: 40px; color: #999; }
-    .empty-icon { font-size: 3em; margin-bottom: 10px; opacity: 0.5; }
-
-    /* =========================================
-       11. MOBILE SPECIFIC (MEDIA QUERIES)
+       MOBILE CARD TABLE TRANSFORM (Magic CSS) 
+       เปลี่ยนตารางเป็นการ์ดเมื่ออยู่บนมือถือ
        ========================================= */
     @media (max-width: 768px) {
-        .app-header { padding: 15px; border-radius: 0 0 20px 20px; margin: -15px -15px 20px -15px; }
-        .app-header h1 { font-size: 1.4em; }
+        /* บังคับให้ตารางเลิกทำตัวเป็นตาราง */
+        .data-table, .data-table thead, .data-table tbody, .data-table th, .data-table td, .data-table tr {
+            display: block;
+        }
 
-        /* Bottom Nav for Mobile */
+        /* ซ่อนหัวตาราง (แต่ไม่ลบออก เพื่อ Accessibility) */
+        .data-table thead tr {
+            position: absolute;
+            top: -9999px; left: -9999px;
+        }
+
+        /* เปลี่ยนแถว (tr) ให้เป็นการ์ด */
+        .data-table tr {
+            border: 2px solid #e8f5e9;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 10px;
+        }
+
+        /* จัดการแต่ละเซลล์ (td) ให้แสดง Label คู่กับ Value */
+        .data-table td {
+            border: none;
+            border-bottom: 1px dashed #eee;
+            position: relative;
+            padding-left: 45% !important; /* เว้นที่ด้านซ้ายให้ Label */
+            padding-top: 8px !important;
+            padding-bottom: 8px !important;
+            text-align: right !important; /* ข้อมูลชิดขวา */
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            word-break: break-word; /* ตัดคำถ้ายาวเกิน */
+        }
+
+        /* สร้าง Label จาก attribute 'data-label' */
+        .data-table td:before {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            width: 40%;
+            padding-right: 10px;
+            white-space: nowrap;
+            text-align: left;
+            font-weight: 700;
+            color: #2e7d32;
+            content: attr(data-label);
+            /* ดึงค่าจาก HTML มาแสดง */
+        }
+
+        /* ลบเส้นคั่นอันสุดท้าย */
+        .data-table td:last-child {
+            border-bottom: 0;
+            padding-left: 0 !important;
+            display: flex;
+            justify-content: center; /* ปุ่ม Action อยู่ตรงกลาง */
+            margin-top: 10px;
+            background: #f9fbe7;
+            border-radius: 8px;
+            padding: 10px !important;
+        }
+        
+        .data-table td:last-child:before { content: none;
+        } /* ซ่อน Label ตรงปุ่ม */
+
+        /* ปรับปุ่มในตารางให้สวยขึ้น */
+        .action-button-group { width: 100%;
+            justify-content: center; gap: 10px; }
+        
+        /* ปรับ Data Table Wrapper ให้ไม่ Scroll แล้ว เพราะแปลงเป็น Card */
+        .data-table-wrapper { overflow-x: visible;
+            padding: 0; background: transparent; box-shadow: none; }
+        .data-table { min-width: 100%;
+        }
+    }
+
+    /* =========================================
+       OTHER UTILS
+       ========================================= */
+    .book-card { background: white;
+        padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px; border: 1px solid #eee;
+    }
+    .book-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .book-card-title { font-size: 1.1em;
+        font-weight: 600; color: #1b5e20; }
+    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;
+    }
+    .status-available { background: #c8e6c9; color: #2e7d32; }
+    .status-borrowed { background: #fff9c4; color: #f57f17;
+    }
+    .status-overdue { background: #ffcdd2; color: #c62828; }
+    .status-returned { background: #b3e5fc; color: #01579b;
+    }
+
+    .chart-wrapper {
+        background: white; padding: 20px; border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 30px;
+        height: 350px !important; position: relative !important;
+        overflow: hidden !important;
+        display: block;
+    }
+    .chart-wrapper canvas { width: 100% !important; height: 100% !important; max-height: 310px;
+    }
+
+    .search-filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
+    }
+    .search-input { flex: 1; padding: 10px; border: 2px solid #c8e6c9; border-radius: 10px; font-family: 'Sarabun';
+    }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex;
+        align-items: center; justify-content: center; z-index: 9998; padding: 20px; }
+    .modal-content { background: white; padding: 25px; border-radius: 15px;
+        max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    
+    .loading-overlay { position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center;
+    }
+    .loading-spinner { width: 50px; height: 50px; border: 5px solid #e8f5e9; border-top-color: #66bb6a; border-radius: 50%;
+        animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg);
+    } }
+    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 10px; color: white;
+        font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; animation: slideIn 0.3s ease-out; background: #66bb6a;
+    }
+/* =========================================
+       MOBILE QUERY (รวมเมนูบน + แก้ล้นกรอบ 100%)
+       ========================================= */
+    @media (max-width: 768px) {
+        /* --- 1. ปรับ Header และ Login --- */
+        .app-header {
+            padding: 15px; border-radius: 0 0 20px 20px;
+            margin: -15px -15px 15px -15px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .app-header h1 { font-size: 1.4em; }
+        .login-btn {
+            position: relative !important; top: auto !important; right: auto !important;
+            margin-bottom: 10px; display: inline-block; width: auto;
+        }
+
+        /* --- 2. ย้ายเมนูไปไว้ด้านบน (Grid 3 คอลัมน์) --- */
         .nav-container {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: white; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 1000; margin: 0; padding: 8px 5px; gap: 5px;
-            justify-content: space-around; border-top: 1px solid #eee;
-            overflow-x: auto; white-space: nowrap;
+            position: static !important; width: 100%;
+            background: transparent; box-shadow: none; border-top: none;
+            padding: 0; margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
         }
         .nav-button {
-            background: transparent; border: none; box-shadow: none; padding: 5px;
-            font-size: 0.75em; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; min-width: auto; color: #888; border-radius: 8px; flex: 1;
+            padding: 10px 5px; border-radius: 12px;
+            background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .nav-button:hover { transform: none; background: transparent; }
-        .nav-button.active { background: rgba(102, 187, 106, 0.1); color: #2e7d32; border: none; box-shadow: none; }
-
+        .nav-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .nav-label { font-size: 0.75rem; font-weight: 600; }
         .nav-button.admin-only { display: none !important; }
         .show-admin .nav-button.admin-only { display: flex !important; }
 
-        .dashboard-grid { grid-template-columns: 1fr 1fr; } /* 2 cols on mobile */
-        .form-layout { grid-template-columns: 1fr; }
-        .search-filters { flex-direction: column; }
-        .action-button-group { flex-direction: row; }
+        /* --- 3. แก้ปัญหาฟอร์มล้นจอ (สำคัญ!) --- */
+        .main-wrapper { padding-bottom: 20px !important; overflow-x: hidden; }
         
+        /* เปลี่ยน Grid เป็น Flex แนวตั้ง เพื่อไม่ให้ Input ดันออกข้าง */
+        .form-layout {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 15px !important;
+        }
+        
+        /* บังคับ Input Group ให้กว้างเต็ม แต่ไม่เกินจอ */
+        .input-group {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* บังคับตัว Input/Date ให้หดอยู่ในกล่อง (Box Sizing) */
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important; /* รวมขอบในความกว้าง */
+        }
+
+        /* ลด Padding การ์ดลงเพื่อให้มีที่เหลือ */
+        .card-container, .dashboard-card { padding: 15px !important; }
         .chart-wrapper { height: 280px !important; }
-        .chart-wrapper canvas { max-height: 240px; }
+    }
+        .dashboard-grid { grid-template-columns: 1fr 1fr;
+        }
+        .form-layout { grid-template-columns: 1fr;
+        }
+        .search-filters { flex-direction: column;
+        }
+        .chart-wrapper { height: 280px !important;
+        }
     }
   </style>
-  <style>@view-transition { navigation: auto; }</style>
+  <style>@view-transition { navigation: auto;
+  }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body>
@@ -369,46 +388,46 @@
    </header>
    
    <nav class="nav-container">
-       <button class="nav-button active" onclick="navigateTo('dashboard')">🏠 <span class="hidden sm:inline">Dashboard</span></button> 
-       <button class="nav-button admin-only" onclick="navigateTo('borrow')">📖 <span class="hidden sm:inline">ยืมหนังสือ</span></button> 
-       <button class="nav-button admin-only" onclick="navigateTo('return')">📥 <span class="hidden sm:inline">คืนหนังสือ</span></button> 
-       <button class="nav-button admin-only" onclick="navigateTo('books')">📚 <span class="hidden sm:inline">จัดการหนังสือ</span></button> 
-       <button class="nav-button admin-only" onclick="navigateTo('members')">👥 <span class="hidden sm:inline">จัดการสมาชิก</span></button> 
-       <button class="nav-button admin-only" onclick="navigateTo('history')">📋 <span class="hidden sm:inline">ประวัติ</span></button>
+       <button class="nav-button active" onclick="navigateTo('dashboard')">
+           <div class="nav-icon">🏠</div>
+           <span class="nav-label">หน้าแรก</span>
+       </button>
+       
+       <button class="nav-button admin-only" onclick="navigateTo('borrow')">
+           <div class="nav-icon">📖</div>
+           <span class="nav-label">ยืม</span>
+       </button>
+ 
+       <button class="nav-button admin-only" onclick="navigateTo('return')">
+           <div class="nav-icon">📥</div>
+           <span class="nav-label">คืน</span>
+       </button>
+       
+       <button class="nav-button admin-only" onclick="navigateTo('books')">
+           <div class="nav-icon">📚</div>
+           <span class="nav-label">หนังสือ</span>
+       </button>
+       
+       <button class="nav-button admin-only" onclick="navigateTo('members')">
+           <div class="nav-icon">👥</div>
+           <span class="nav-label">สมาชิก</span>
+       </button>
+       
+       <button class="nav-button admin-only" onclick="navigateTo('history')">
+           <div class="nav-icon">📋</div>
+           <span class="nav-label">ประวัติ</span>
+       </button>
    </nav>
 
    <div id="dashboard" class="content-section active">
     <div class="dashboard-grid">
-     <div class="dashboard-card">
-      <h3>หนังสือทั้งหมด</h3>
-      <div class="stat-number" id="totalBooks">0</div>
-      <div class="stat-label">เล่ม</div>
-     </div>
-     <div class="dashboard-card">
-      <h3>หนังสือพร้อมให้ยืม</h3>
-      <div class="stat-number" id="availableBooks">0</div>
-      <div class="stat-label">เล่ม</div>
-     </div>
-     <div class="dashboard-card">
-      <h3>กำลังถูกยืม</h3>
-      <div class="stat-number" id="borrowedBooks">0</div>
-      <div class="stat-label">เล่ม</div>
-     </div>
-     <div class="dashboard-card admin-only">
-      <h3>เกินกำหนดคืน</h3>
-      <div class="stat-number" id="overdueBooks">0</div>
-      <div class="stat-label">เล่ม</div>
-     </div>
-     <div class="dashboard-card admin-only">
-      <h3>สมาชิกทั้งหมด</h3>
-      <div class="stat-number" id="totalMembers">0</div>
-      <div class="stat-label">คน</div>
-     </div>
-     <div class="dashboard-card admin-only">
-      <h3>ยืมวันนี้</h3>
-      <div class="stat-number" id="todayBorrows">0</div>
-      <div class="stat-label">รายการ</div>
-     </div>
+     <div class="dashboard-card"><h3>หนังสือทั้งหมด</h3><div class="stat-number" id="totalBooks">0</div><div class="stat-label">เล่ม</div></div>
+     <div class="dashboard-card"><h3>หนังสือพร้อมให้ยืม</h3><div class="stat-number" id="availableBooks">0</div><div class="stat-label">เล่ม</div></div>
+     <div class="dashboard-card"><h3>กำลังถูกยืม</h3><div class="stat-number" id="borrowedBooks">0</div><div class="stat-label">เล่ม</div></div>
+     
+     <div class="dashboard-card admin-only"><h3>เกินกำหนดคืน</h3><div class="stat-number" id="overdueBooks">0</div><div class="stat-label">เล่ม</div></div>
+     <div class="dashboard-card admin-only"><h3>สมาชิกทั้งหมด</h3><div class="stat-number" id="totalMembers">0</div><div class="stat-label">คน</div></div>
+     <div class="dashboard-card admin-only"><h3>ยืมวันนี้</h3><div class="stat-number" id="todayBorrows">0</div><div class="stat-label">รายการ</div></div>
     </div>
     
     <div class="card-container">
@@ -416,33 +435,16 @@
      <div class="search-filters">
         <input type="text" class="search-input" id="searchAvailableBooksPublic" placeholder="🔍 ค้นหาหนังสือ..." oninput="searchAvailableBooksPublic()"> 
         <select class="search-input" id="filterCategoryPublic" onchange="searchAvailableBooksPublic()"> 
-            <option value="">ทุกหมวดหมู่</option> 
-            <option value="นิยาย">นิยาย</option> 
-            <option value="การ์ตูน">การ์ตูน</option> 
-            <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> 
-            <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> 
-            <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> 
-            <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> 
-            <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> 
-            <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> 
-            <option value="อื่นๆ">อื่นๆ</option> 
+            <option value="">ทุกหมวดหมู่</option> <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option 
+            value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option> 
         </select>
      </div>
      <div id="availableBooksListPublic"></div>
     </div>
 
-    <div class="chart-wrapper admin-only">
-     <h2>📊 สถิติการยืมรายวัน (7 วันล่าสุด)</h2>
-     <canvas id="borrowChart"></canvas>
-    </div>
-    <div class="chart-wrapper admin-only">
-     <h2>📚 หนังสือยอดนิยม</h2>
-     <canvas id="popularChart"></canvas>
-    </div>
-    <div class="card-container admin-only">
-     <h2>⚠️ หนังสือเกินกำหนดคืน</h2>
-     <div id="overdueList"></div>
-    </div>
+    <div class="chart-wrapper"><h2>📊 สถิติการยืมรายวัน (7 วันล่าสุด)</h2><canvas id="borrowChart"></canvas></div>
+    <div class="chart-wrapper"><h2>📚 หนังสือยอดนิยม</h2><canvas id="popularChart"></canvas></div>
+    <div class="card-container"><h2>⚠️ หนังสือเกินกำหนดคืน</h2><div id="overdueList"></div></div>
    </div>
 
    <div id="borrow" class="content-section">
@@ -450,20 +452,24 @@
      <h2>📖 ยืมหนังสือ (ผู้ดูแลระบบ)</h2>
      <form id="borrowForm" onsubmit="handleBorrow(event)">
       <div class="form-layout">
-       <div class="input-group">
+       <div class="input-group" style="grid-column: 1 / -1;">
            <label for="borrowMemberId">ค้นหาสมาชิก (พิมพ์ชื่อหรือรหัส) *</label> 
            <input type="text" id="borrowMemberId" list="memberOptions" required placeholder="พิมพ์ชื่อหรือรหัสเพื่อค้นหา...">
            <datalist id="memberOptions"></datalist>
        </div>
-
-       <div class="input-group"><label for="borrowDate">วันที่ยืม *</label> <input type="date" id="borrowDate" required></div>
-       <div class="input-group"><label for="dueDate">กำหนดคืน (180 วัน) *</label> <input type="date" id="dueDate" required></div>
-       
+<div class="input-group" style="grid-column: 1 / -1;">
+           <label for="borrowDate">วันที่ยืม *</label> 
+           <input type="date" id="borrowDate" required>
+       </div>
+<div class="input-group" style="grid-column: 1 / -1;">
+           <label for="dueDate">กำหนดคืน (180 วัน) *</label> 
+           <input type="date" id="dueDate" required>
+       </div>
        <div class="input-group" style="grid-column: 1 / -1; border-top: 1px dashed #c8e6c9; padding-top: 20px;">
            <label style="color: #1b5e20; font-size: 1.1em;">➕ เพิ่มรายการหนังสือที่ต้องการยืม</label>
            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-               <input type="text" id="borrowBookIdInput" placeholder="กรอกรหัสหนังสือ (เช่น B001) แล้วกดเพิ่ม" style="flex:1; border: 2px solid #66bb6a;">
-               <button type="button" class="button-secondary" onclick="addToCart()">➕ เพิ่มรายการ</button>
+               <input type="text" id="borrowBookIdInput" placeholder="กรอกรหัสหนังสือ (เช่น B001)" style="flex:1; border: 2px solid #66bb6a;">
+               <button type="button" class="button-secondary" onclick="addToCart()">➕ เพิ่ม</button>
            </div>
        </div>
 
@@ -471,24 +477,14 @@
            <label>รายการที่เลือกไว้ (Cart)</label>
            <div class="data-table-wrapper" style="padding: 0; box-shadow: none; border: 1px solid #c8e6c9;">
                <table class="data-table">
-                   <thead style="background: #f1f8e9;">
-                       <tr>
-                           <th>รหัส</th>
-                           <th>ชื่อหนังสือ</th>
-                           <th style="text-align: center;">จัดการ</th>
-                       </tr>
-                   </thead>
-                   <tbody id="borrowCartTableBody">
-                       <tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr>
-                   </tbody>
+                   <thead style="background: #f1f8e9;"><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th style="text-align: center;">จัดการ</th></tr></thead>
+                   <tbody id="borrowCartTableBody"><tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr></tbody>
                </table>
            </div>
        </div>
-
        <div class="input-group" style="grid-column: 1 / -1;"><label for="borrowNotes">หมายเหตุ</label> <textarea id="borrowNotes" placeholder="บันทึกเพิ่มเติม..."></textarea></div>
       </div>
-      
-      <button type="submit" class="button-primary" id="borrowSubmitBtn" style="width: 100%; margin-top: 10px;"> 📖 ยืนยันการยืมหนังสือทั้งหมด </button>
+      <button type="submit" class="button-primary" id="borrowSubmitBtn" style="margin-top: 10px;"> 📖 ยืนยันการยืมหนังสือทั้งหมด </button>
      </form>
     </div>
     <div class="card-container">
@@ -511,23 +507,14 @@
      <h2>➕ เพิ่มหนังสือใหม่</h2>
      <form id="bookForm" onsubmit="handleAddBook(event)">
       <div class="form-layout">
-       <div class="input-group"><label for="bookId">รหัสหนังสือ *</label> <input type="text" id="bookId" required placeholder="B001"></div>
+       <div class="input-group"><label 
+        for="bookId">รหัสหนังสือ *</label> <input type="text" id="bookId" required placeholder="B001"></div>
        <div class="input-group"><label for="bookTitle">ชื่อหนังสือ *</label> <input type="text" id="bookTitle" required placeholder="ชื่อหนังสือ"></div>
        <div class="input-group"><label for="bookAuthor">ผู้แต่ง *</label> <input type="text" id="bookAuthor" required placeholder="ชื่อผู้แต่ง"></div>
-       <div class="input-group"><label for="bookCategory">หมวดหมู่ *</label> <select id="bookCategory" required> 
-        <option value="">เลือกหมวดหมู่</option> 
-        <option value="นิยาย">นิยาย</option> 
-        <option value="การ์ตูน">การ์ตูน</option> 
-        <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> 
-        <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> 
-        <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> 
-        <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> 
-        <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> 
-        <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> 
-        <option value="อื่นๆ">อื่นๆ</option> </select>
-       </div>
+       <div class="input-group"><label for="bookCategory">หมวดหมู่ *</label> <select id="bookCategory" required> <option value="">เลือกหมวดหมู่</option> <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option> </select></div>
        <div class="input-group"><label for="bookISBN">ISBN</label> <input type="text" id="bookISBN" placeholder="978-xxx-xxx"></div>
        <div class="input-group"><label for="bookQuantity">จำนวน *</label> <input type="number" id="bookQuantity" required min="1" value="1"></div>
+ 
       </div><button type="submit" class="button-primary"> ➕ เพิ่มหนังสือ </button>
      </form>
     </div>
@@ -535,7 +522,7 @@
      <h2 style="margin-bottom: 20px;">📚 รายการหนังสือทั้งหมด</h2>
      <div class="search-filters"><input type="text" class="search-input" id="searchBooks" placeholder="🔍 ค้นหาหนังสือ..." oninput="searchBooks()"></div>
      <table class="data-table">
-      <thead><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th>ผู้แต่ง</th><th>หมวดหมู่</th><th>ISBN</th><th>จำนวนทั้งหมด</th><th>พร้อมให้ยืม</th><th>การจัดการ</th></tr></thead>
+      <thead><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th>ผู้แต่ง</th><th>หมวดหมู่</th><th>ISBN</th><th>จำนวน</th><th>เหลือ</th><th>การจัดการ</th></tr></thead>
       <tbody id="booksTableBody"></tbody>
      </table>
     </div>
@@ -545,23 +532,14 @@
     <div class="card-container">
      <h2>➕ เพิ่มสมาชิกใหม่</h2>
      <form id="memberForm" onsubmit="handleAddMember(event)">
+  
       <div class="form-layout">
        <div class="input-group"><label for="memberId">รหัสสมาชิก *</label> <input type="text" id="memberId" required placeholder="M001"></div>
        <div class="input-group"><label for="memberName">ชื่อ-สกุล *</label> <input type="text" id="memberName" required placeholder="นายสมชาย ใจดี"></div>
        <div class="input-group"><label for="memberEmail">อีเมล</label> <input type="email" id="memberEmail" placeholder="example@mail.com"></div>
        <div class="input-group"><label for="memberPhone">เบอร์โทร *</label> <input type="tel" id="memberPhone" required placeholder="08x-xxx-xxxx"></div>
-       
-       <div class="input-group"><label for="memberType">ประเภท/ระดับชั้น *</label> 
-         <select id="memberType" required> 
-             <option value="">เลือกประเภท</option> 
-             <option value="ประถมศึกษา">นักศึกษา ระดับประถมศึกษา</option> 
-             <option value="มัธยมศึกษาตอนต้น">นักศึกษา ระดับมัธยมศึกษาตอนต้น</option> 
-             <option value="มัธยมศึกษาตอนปลาย">นักศึกษา ระดับมัธยมศึกษาตอนปลาย</option> 
-             <option value="ครู">ครู</option> 
-             <option value="บุคลากร">บุคลากร</option> 
-             <option value="ทั่วไป">บุคคลทั่วไป</option> 
-         </select>
-       </div>
+       <div class="input-group"><label for="memberType">ประเภท *</label> <select id="memberType" required> <option value="">เลือกประเภท</option> <option value="ประถมศึกษา">นักศึกษา ระดับประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">นักศึกษา ระดับมัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">นักศึกษา ระดับมัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">บุคคลทั่วไป</option> </select></div>
+     
       </div><button type="submit" class="button-primary"> ➕ เพิ่มสมาชิก </button>
      </form>
     </div>
@@ -569,19 +547,12 @@
      <h2 style="margin-bottom: 20px;">👥 รายการสมาชิกทั้งหมด</h2>
      <div class="search-filters">
         <input type="text" class="search-input" id="searchMembers" placeholder="🔍 ค้นหาสมาชิก..." oninput="searchMembers()"> 
-        <select class="search-input" id="filterMemberType" onchange="searchMembers()"> 
-            <option value="">ทุกประเภท</option> 
-            <option value="ประถมศึกษา">ประถมศึกษา</option> 
-            <option value="มัธยมศึกษาตอนต้น">มัธยมศึกษาตอนต้น</option> 
-            <option value="มัธยมศึกษาตอนปลาย">มัธยมศึกษาตอนปลาย</option> 
-            <option value="ครู">ครู</option> 
-            <option value="บุคลากร">บุคลากร</option> 
-            <option value="ทั่วไป">ทั่วไป</option>
-        </select>
+        <select class="search-input" id="filterMemberType" onchange="searchMembers()"> <option value="">ทุกประเภท</option> <option value="ประถมศึกษา">ประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">มัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">มัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">ทั่วไป</option> </select>
      </div>
      <table class="data-table">
-      <thead><tr><th>รหัสสมาชิก</th><th>ชื่อ-สกุล</th><th>อีเมล</th><th>เบอร์โทร</th><th>ประเภท</th><th>การจัดการ</th></tr></thead>
+      <thead><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>อีเมล</th><th>เบอร์โทร</th><th>ประเภท</th><th>การจัดการ</th></tr></thead>
       <tbody id="membersTableBody"></tbody>
+ 
      </table>
     </div>
    </div>
@@ -589,7 +560,7 @@
    <div id="history" class="content-section">
     <div class="data-table-wrapper">
      <h2 style="margin-bottom: 20px;">📋 ประวัติการยืม-คืน</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหาด้วยชื่อ หรือรหัส..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV (มีชื่อผู้ยืม)</button></div>
+     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหาด้วยชื่อ หรือรหัส..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV</button></div>
      <table class="data-table">
       <thead><tr><th>รหัสสมาชิก</th><th>ชื่อผู้ยืม</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
       <tbody id="historyTableBody"></tbody>
@@ -597,852 +568,436 @@
     </div>
    </div>
    
-   <footer class="bg-white mt-10 border-t">
-    <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-xs sm:text-sm lg:text-base">
-        <p class="mb-1">© 2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</p>
-    </div>
-   </footer>
+   <footer class="bg-white mt-10 
+    border-t"><div class="container mx-auto py-6 text-center text-gray-500 text-sm"><p class="mb-1">© 2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</p></div></footer>
   </div>
 
   <script>
-    // Configuration
-    // ⚠️ อย่าลืมใส่ URL Script ของคุณเองที่นี่
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRS1iie8d2Bj-jxh6n2Y7XcZBoVWOoNxtXIvA6p3rjyx_DnhUyUWR3TqmL7GYwD5Ybiw/exec';
+    const ADMIN_PASSWORD = "admin1250240004"; 
+    const LOAN_DAYS = 180; 
     
-    // ⚠️ CONFIGURATION: Password & Loan Days
-    const ADMIN_PASSWORD = "admin1250240004"; // รหัสผ่านแอดมิน
-    const LOAN_DAYS = 180; // ระยะเวลายืม 180 วัน
-    
-    let books = [];
-    let members = [];
-    let borrowRecords = [];
-    let borrowCart = []; 
-    
-    let charts = {};
-    let isConnected = false;
-    let isAdmin = false;
+    let books = [], members = [], borrowRecords = [], borrowCart = [], charts = {};
+    let isConnected = false, isAdmin = false;
 
     const defaultConfig = {
       library_name: "📚 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
       admin_name: "ระบบจัดการยืม-คืนหนังสืออัตโนมัติ",
-      contact_info: "@2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข : สกร.ระดับอำเภอดอยหล่อ โทร. 062-6834332",
+      contact_info: "@2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
     };
-
-    // ---------------- AUTH SYSTEM ----------------
     function showLoginModal() {
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.id = 'loginOverlay';
-        overlay.innerHTML = `
-            <div class="modal-content login-container" style="text-align: center;">
-                <div class="modal-header">🔑 เข้าสู่ระบบแอดมิน</div>
-                <p>กรุณากรอกรหัสผ่านเพื่อจัดการระบบ</p>
-                <form onsubmit="handleLogin(event)">
-                    <input type="password" id="adminPassword" class="search-input" style="width:100%; text-align:center; margin: 15px 0;" placeholder="รหัสผ่าน" required>
-                    <div class="modal-buttons" style="justify-content: center; margin-top: 20px;">
-                        <button type="button" class="button-secondary" onclick="document.getElementById('loginOverlay').remove()">ยกเลิก</button>
-                        <button type="submit" class="button-primary">เข้าสู่ระบบ</button>
-                    </div>
-                </form>
-            </div>
-        `;
-        document.body.appendChild(overlay);
-        setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+        const overlay = document.createElement('div'); overlay.className = 'modal-overlay'; overlay.id = 'loginOverlay';
+        overlay.innerHTML = `<div class="modal-content login-container" style="text-align: center;"><div class="modal-header">🔑 เข้าสู่ระบบแอดมิน</div><p>กรุณากรอกรหัสผ่านเพื่อจัดการระบบ</p><form onsubmit="handleLogin(event)"><input type="password" id="adminPassword" class="search-input" style="width:100%; text-align:center; margin: 15px 0;"
+        placeholder="รหัสผ่าน" required><div class="modal-buttons" style="justify-content: center; margin-top: 20px;"><button type="button" class="button-secondary" onclick="document.getElementById('loginOverlay').remove()">ยกเลิก</button><button type="submit" class="button-primary">เข้าสู่ระบบ</button></div></form></div>`;
+        document.body.appendChild(overlay); setTimeout(() => document.getElementById('adminPassword').focus(), 100);
     }
-
     function handleLogin(e) {
-        e.preventDefault();
-        const pwd = document.getElementById('adminPassword').value;
-        if (pwd === ADMIN_PASSWORD) {
-            isAdmin = true;
-            document.getElementById('mainWrapper').classList.add('show-admin');
-            document.getElementById('adminLoginBtn').style.display = 'none';
-            document.getElementById('adminLogoutBtn').style.display = 'block';
-            document.getElementById('loginOverlay').remove();
-            showToast('เข้าสู่ระบบสำเร็จ', 'success');
-            updateAllViews();
-        } else {
-            showToast('รหัสผ่านไม่ถูกต้อง', 'error');
-        }
+        e.preventDefault(); const pwd = document.getElementById('adminPassword').value;
+        if (pwd === ADMIN_PASSWORD) { isAdmin = true; document.getElementById('mainWrapper').classList.add('show-admin'); document.getElementById('adminLoginBtn').style.display = 'none'; document.getElementById('adminLogoutBtn').style.display = 'block'; document.getElementById('loginOverlay').remove(); showToast('เข้าสู่ระบบสำเร็จ', 'success'); updateAllViews();
+        } else { showToast('รหัสผ่านไม่ถูกต้อง', 'error'); }
     }
-
-    function logout() {
-        isAdmin = false;
-        document.getElementById('mainWrapper').classList.remove('show-admin');
-        document.getElementById('adminLoginBtn').style.display = 'block';
-        document.getElementById('adminLogoutBtn').style.display = 'none';
-        navigateTo('dashboard');
-        showToast('ออกจากระบบแล้ว', 'success');
-    }
-
-    // ---------------- EXISTING FUNCTIONS ----------------
+    function logout() { isAdmin = false; document.getElementById('mainWrapper').classList.remove('show-admin');
+    document.getElementById('adminLoginBtn').style.display = 'block'; document.getElementById('adminLogoutBtn').style.display = 'none'; navigateTo('dashboard'); showToast('ออกจากระบบแล้ว', 'success'); }
 
     function updateConnectionStatus(status) {
-      const statusEl = document.getElementById('connectionStatus');
-      const iconEl = document.getElementById('statusIcon');
-      const textEl = document.getElementById('statusText');
+      const statusEl = document.getElementById('connectionStatus'), iconEl = document.getElementById('statusIcon'), textEl = document.getElementById('statusText');
       statusEl.className = 'connection-status';
-      if (status === 'connected') {
-        statusEl.classList.add('status-connected'); iconEl.textContent = '✅'; textEl.textContent = 'เชื่อมต่อแล้ว';
-        isConnected = true;
-      } else if (status === 'syncing') {
-        statusEl.classList.add('status-syncing');
-        iconEl.textContent = '🔄'; textEl.textContent = 'กำลังซิงค์ข้อมูล...';
-      } else {
-        statusEl.classList.add('status-disconnected'); iconEl.textContent = '❌';
-        textEl.textContent = 'ไม่สามารถเชื่อมต่อได้'; isConnected = false;
+      if (status === 'connected') { statusEl.classList.add('status-connected'); iconEl.textContent = '✅'; textEl.textContent = 'เชื่อมต่อแล้ว'; isConnected = true;
+      }
+      else if (status === 'syncing') { statusEl.classList.add('status-syncing'); iconEl.textContent = '🔄'; textEl.textContent = 'กำลังซิงค์ข้อมูล...';
+      }
+      else { statusEl.classList.add('status-disconnected'); iconEl.textContent = '❌'; textEl.textContent = 'ไม่สามารถเชื่อมต่อได้'; isConnected = false;
       }
     }
     
-    function showLoading() {
-      const overlay = document.createElement('div');
-      overlay.className = 'loading-overlay';
-      overlay.id = 'loadingOverlay';
-      overlay.innerHTML = '<div class="loading-spinner"></div>';
-      document.body.appendChild(overlay);
+    function showLoading() { const overlay = document.createElement('div');
+        overlay.className = 'loading-overlay'; overlay.id = 'loadingOverlay'; overlay.innerHTML = '<div class="loading-spinner"></div>'; document.body.appendChild(overlay);
     }
-    
-    function hideLoading() {
-      const overlay = document.getElementById('loadingOverlay');
-      if (overlay) overlay.remove();
+    function hideLoading() { const overlay = document.getElementById('loadingOverlay'); if (overlay) overlay.remove();
     }
     
     function scriptRequest(params) {
       return new Promise((resolve, reject) => {
-        const formData = new FormData();
-        Object.keys(params).forEach(key => formData.append(key, params[key]));
-        fetch(SCRIPT_URL, { method: 'POST', body: formData })
-        .then(response => { if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); return response.json(); })
-        .then(data => { if (data && data.success === false) reject(new Error(data.error || 'Apps Script returned an error.')); else resolve(data); })
-        .catch(error => { console.error("Script Request Failed:", error); reject(error); });
+        const formData = new FormData(); Object.keys(params).forEach(key => formData.append(key, params[key]));
+        fetch(SCRIPT_URL, { method: 'POST', body: formData }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(d => { if (d && d.success === false) reject(new Error(d.error)); else resolve(d); }).catch(e => { console.error("Script Error:", e); reject(e); });
       });
     }
 
     async function loadDataFromSheets() {
-      if (isConnected) return;
-      showLoading();
-      updateConnectionStatus('syncing');
-      try {
-        const response = await scriptRequest({ action: 'getData' });
-        if (response && response.success) {
-          books = response.books || [];
-          members = response.members || [];
-          borrowRecords = response.borrowRecords || [];
-          updateConnectionStatus('connected');
-          updateAllViews();
-          hideLoading();
-          showToast('โหลดข้อมูลสำเร็จ!', 'success');
-          return true;
-        } else { throw new Error(response?.error || 'Failed to load data');
-        }
-      } catch (error) {
-        console.error('Error loading data:', error);
-        updateConnectionStatus('disconnected');
-        hideLoading();
-        showToast('ไม่สามารถโหลดข้อมูลได้', 'error');
-        return false;
+      if (isConnected) return; showLoading(); updateConnectionStatus('syncing');
+      try { const r = await scriptRequest({ action: 'getData' }); if (r && r.success) { books = r.books || [];
+      members = r.members || []; borrowRecords = r.borrowRecords || []; updateConnectionStatus('connected'); updateAllViews(); hideLoading(); showToast('โหลดข้อมูลสำเร็จ!', 'success'); return true;
+      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); hideLoading(); showToast('ไม่สามารถโหลดข้อมูลได้', 'error'); return false;
       }
     }
 
-    async function saveToSheets(sheet, data) {
-      try {
-        updateConnectionStatus('syncing');
-        const response = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) });
-        if (response && response.success) { updateConnectionStatus('connected'); return true;
-        } else { throw new Error(response?.error || 'Failed to save data');
-        }
-      } catch (error) {
-        console.error('Error saving data:', error);
-        updateConnectionStatus('disconnected');
-        showToast('ไม่สามารถบันทึกข้อมูลได้', 'error');
-        return false;
-      }
-    }
+    async function saveToSheets(sheet, data) { try { updateConnectionStatus('syncing');
+      const r = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) }); if (r && r.success) { updateConnectionStatus('connected'); return true;
+      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('บันทึกไม่สำเร็จ', 'error'); return false;
+      } }
+    async function deleteFromSheets(sheet, id) { try { updateConnectionStatus('syncing');
+      const r = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id }); if (r && r.success) { updateConnectionStatus('connected'); return true;
+      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('ลบไม่สำเร็จ', 'error'); return false;
+      } }
 
-    async function deleteFromSheets(sheet, id) {
-      try {
-        updateConnectionStatus('syncing');
-        const response = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id });
-        if (response && response.success) { updateConnectionStatus('connected'); return true;
-        } else { throw new Error(response?.error || 'Failed to delete data');
-        }
-      } catch (error) {
-        console.error('Error deleting data:', error);
-        updateConnectionStatus('disconnected');
-        showToast('ไม่สามารถลบข้อมูลได้', 'error');
-        return false;
-      }
+    function showToast(message, type = 'success') { const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
+      toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+    function showConfirmModal(title, message, onConfirm) { const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay'; overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><div class="modal-body">${message}</div><div class="modal-buttons"><button class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button class="button-danger" id="confirmBtn">ยืนยัน</button></div></div>`; document.body.appendChild(overlay);
+      document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); }; overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
-
-    function showToast(message, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = `toast toast-${type}`;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    }
-    
-    function showConfirmModal(title, message, onConfirm) {
-      const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
-      overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><div class="modal-body">${message}</div><div class="modal-buttons"><button class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button class="button-danger" id="confirmBtn">ยืนยัน</button></div></div>`;
-      document.body.appendChild(overlay);
-      document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); };
-      overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-    }
-    
     function findItem(array, id) { return array.find(item => item.id === id);
     }
 
     function showEditModal(title, formHtml, onSave) {
-      const existingOverlay = document.getElementById('genericModalOverlay');
-      if (existingOverlay) existingOverlay.remove();
-      const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay';
-      overlay.id = 'genericModalOverlay';
-      overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><form id="editForm"><div class="modal-body" style="margin-bottom: 0;">${formHtml}</div><div class="modal-buttons" style="margin-top: 20px;"><button type="button" class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button type="submit" class="button-primary" id="saveEditBtn">บันทึกการแก้ไข</button></div></form></div>`;
+      const existing = document.getElementById('genericModalOverlay');
+      if (existing) existing.remove();
+      const overlay = document.createElement('div'); overlay.className = 'modal-overlay'; overlay.id = 'genericModalOverlay';
+      overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><form id="editForm"><div class="modal-body" style="margin-bottom: 0;">${formHtml}</div><div class="modal-buttons" style="margin-top: 20px;"><button type="button" class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button type="submit" class="button-primary" id="saveEditBtn">บันทึก</button></div></form></div>`;
       document.body.appendChild(overlay);
-      const form = document.getElementById('editForm');
-      form.onsubmit = async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('saveEditBtn');
-        btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
-        await onSave(); overlay.remove();
+      document.getElementById('editForm').onsubmit = async (e) => { e.preventDefault(); const btn = document.getElementById('saveEditBtn'); btn.disabled = true; btn.textContent = 'บันทึก...'; await onSave(); overlay.remove();
       };
       overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
 
     function navigateTo(sectionId) {
-      document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-      document.querySelectorAll('.nav-button').forEach(button => button.classList.remove('active'));
-      const targetButton = event.target.closest('.nav-button');
-      if (targetButton) targetButton.classList.add('active');
-
-      if (sectionId === 'books') updateBooksTable();
-      if (sectionId === 'members') updateMembersTable();
+      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active')); document.getElementById(sectionId).classList.add('active');
+      document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
+      const target = event.target.closest('.nav-button'); if (target) target.classList.add('active');
+      if (sectionId === 'books') updateBooksTable(); if (sectionId === 'members') updateMembersTable();
       if (sectionId === 'history') updateHistoryTable();
-      if (sectionId === 'borrow') {
-        updateAvailableBooksList();
-        const today = new Date().toISOString().split('T')[0];
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + LOAN_DAYS);
-        document.getElementById('borrowDate').value = today;
-        document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
+      if (sectionId === 'borrow') { updateAvailableBooksList(); const t = new Date();
+      const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0];
       }
-      if (sectionId === 'return') updateBorrowedBooksList();
-      if (sectionId === 'dashboard') updateAvailableBooksListPublic();
+      if (sectionId === 'return') updateBorrowedBooksList(); if (sectionId === 'dashboard') updateAvailableBooksListPublic();
+    }
+    function updateMemberOptions() { const dl = document.getElementById('memberOptions'); if(dl) dl.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join('');
     }
 
-    // ✅ เพิ่มฟังก์ชันอัปเดตตัวเลือกสมาชิก (Datalist)
-    function updateMemberOptions() {
-        const datalist = document.getElementById('memberOptions');
-        if(datalist) {
-            datalist.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join('');
-        }
-    }
-
+    // แก้ไข: ย้าย updateCharts ออกจาก if(isAdmin) เพื่อให้แสดงกราฟได้เลย
     function updateAllViews() {
-      updateDashboardStats();
-      updateAvailableBooksListPublic();
+      updateDashboardStats(); 
+      updateAvailableBooksListPublic(); 
       updateMemberOptions();
-      // เรียกใช้ที่นี่เพื่อให้ข้อมูลอัปเดตเสมอ
       
-      if (isAdmin) {
-          updateCharts();
+      // แสดงกราฟและสถิติต่างๆ ทันที
+      updateCharts();
+
+      if (isAdmin) { 
           updateBooksTable();
-          updateMembersTable();
-          updateHistoryTable();
-          updateAvailableBooksList();
-          updateBorrowedBooksList();
+          updateMembersTable(); 
+          updateHistoryTable(); 
+          updateAvailableBooksList(); 
+          updateBorrowedBooksList(); 
       }
     }
 
     function updateDashboardStats() {
-      const totalAvailable = books.reduce((sum, book) => sum + parseInt(book.available), 0);
+      const totalAvailable = books.reduce((s, b) => s + parseInt(b.available), 0);
       const totalBorrowed = borrowRecords.filter(b => b.status === 'borrowed').length;
-      
-      // FIX Timezone for Today's Borrow Count
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const todayString = `${year}-${month}-${day}`;
-      
+      const now = new Date(); const todayString = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
       const todayBorrows = borrowRecords.filter(b => b.borrowDate === todayString && b.status === 'borrowed').length;
       const overdue = borrowRecords.filter(b => b.status === 'borrowed' && new Date(b.dueDate) < new Date());
 
-      document.getElementById('totalBooks').textContent = books.length;
-      document.getElementById('availableBooks').textContent = totalAvailable;
+      document.getElementById('totalBooks').textContent = books.length; document.getElementById('availableBooks').textContent = totalAvailable;
       document.getElementById('borrowedBooks').textContent = totalBorrowed;
-      document.getElementById('overdueBooks').textContent = overdue.length;
-      document.getElementById('totalMembers').textContent = members.length;
-      document.getElementById('todayBorrows').textContent = todayBorrows;
+      document.getElementById('overdueBooks').textContent = overdue.length; document.getElementById('totalMembers').textContent = members.length; document.getElementById('todayBorrows').textContent = todayBorrows;
       
       const overdueList = document.getElementById('overdueList');
-      if (overdue.length === 0) {
-        overdueList.innerHTML = '<p style="color: #66bb6a; text-align: center; padding: 20px;">🎉 ไม่มีหนังสือเกินกำหนดคืน</p>';
+      if (overdue.length === 0) { overdueList.innerHTML = '<p style="color: #66bb6a; text-align: center; padding: 20px;">🎉 ไม่มีหนังสือเกินกำหนดคืน</p>';
       } else {
         overdueList.innerHTML = overdue.map(item => {
-          const book = books.find(b => b.id === item.bookId);
-          const member = members.find(m => m.id === item.memberId);
+          const book = books.find(b => b.id === item.bookId); const member = members.find(m => m.id === item.memberId);
           const daysOverdue = Math.floor((new Date() - new Date(item.dueDate)) / (1000 * 60 * 60 * 24));
-          return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${book ? book.title : item.bookId}</div><div class="book-card-author">สมาชิก: ${member ? member.name : item.memberId}</div></div><span class="status-badge status-overdue">เกิน ${daysOverdue} วัน</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัสหนังสือ:</span> ${item.bookId}</div><div class="book-card-info-item"><span class="book-card-info-label">กำหนดคืน:</span> ${item.dueDate}</div></div></div>`;
+          return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${book ? book.title : item.bookId}</div><div class="book-card-author">สมาชิก: ${member ? member.name : item.memberId}</div></div><span class="status-badge status-overdue">เกิน ${daysOverdue} วัน</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${item.bookId}</div><div class="book-card-info-item"><span class="book-card-info-label">กำหนด:</span> ${item.dueDate}</div></div></div>`;
+ 
         }).join('');
       }
     }
     
     function updateAvailableBooksListPublic() {
-        const searchTerm = document.getElementById('searchAvailableBooksPublic')?.value.toLowerCase() || '';
-        const filterCategory = document.getElementById('filterCategoryPublic')?.value || '';
-        let availableBooks = books.filter(book => parseInt(book.available) > 0);
-        availableBooks = availableBooks.filter(book => {
-            const matchSearch = book.id.toLowerCase().includes(searchTerm) || book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm);
-            const matchCategory = !filterCategory || book.category === filterCategory;
-            return matchSearch && matchCategory;
-        });
+        const term = document.getElementById('searchAvailableBooksPublic')?.value.toLowerCase() ||
+        '';
+        const cat = document.getElementById('filterCategoryPublic')?.value || '';
+        let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)) && (!cat || b.category === cat));
         const container = document.getElementById('availableBooksListPublic');
-        if (availableBooks.length === 0) {
-            container.innerHTML = '<div class="empty-message"><div class="empty-icon">📖</div><h3>ไม่พบหนังสือที่ค้นหา</h3></div>';
-            return;
+        if (list.length === 0) { container.innerHTML = '<div class="empty-message"><div class="empty-icon">📖</div><h3>ไม่พบหนังสือ</h3></div>'; return;
         }
-        container.innerHTML = availableBooks.map(book => `
-            <div class="book-card">
-            <div class="book-card-header"><div><div class="book-card-title">${book.title}</div><div class="book-card-author">ผู้แต่ง: ${book.author}</div></div><span class="status-badge status-available">เหลือ: ${book.available} เล่ม</span></div>
-            <div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${book.id}</div><div class="book-card-info-item"><span class="book-card-info-label">หมวด:</span> ${book.category}</div><div class="book-card-info-item"><span class="book-card-info-label">ISBN:</span> ${book.isbn || '-'}</div></div></div>
-        `).join('');
+        container.innerHTML = list.map(b => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.title}</div><div class="book-card-author">ผู้แต่ง: ${b.author}</div></div><span class="status-badge status-available">เหลือ: ${b.available}</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${b.id}</div><div class="book-card-info-item"><span class="book-card-info-label">หมวด:</span> ${b.category}</div></div></div>`).join('');
     }
     function searchAvailableBooksPublic() { updateAvailableBooksListPublic(); }
 
     async function handleAddBook(event) {
       event.preventDefault();
-      const bookId = document.getElementById('bookId').value;
-      if (books.some(b => b.id === bookId)) { showToast('มีรหัสหนังสือนี้แล้ว', 'warning'); return;
+      const id = document.getElementById('bookId').value;
+      if (books.some(b => b.id === id)) { showToast('มีรหัสหนังสือนี้แล้ว', 'warning'); return;
       }
-      const quantity = parseInt(document.getElementById('bookQuantity').value);
-      const book = { id: bookId, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, category: document.getElementById('bookCategory').value, isbn: document.getElementById('bookISBN').value || '', quantity: quantity, available: quantity, timestamp: Date.now() };
-      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
-      const success = await saveToSheets('books', book);
-      if (success) { books.push(book); updateAllViews(); showToast('เพิ่มหนังสือสำเร็จ!', 'success'); event.target.reset();
-      }
-      btn.disabled = false; btn.textContent = '➕ เพิ่มหนังสือ';
+      const q = parseInt(document.getElementById('bookQuantity').value);
+      const b = { id: id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, category: document.getElementById('bookCategory').value, isbn: document.getElementById('bookISBN').value ||
+      '', quantity: q, available: q, timestamp: Date.now() };
+      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'บันทึก...';
+      const s = await saveToSheets('books', b); if (s) { books.push(b); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false;
+      btn.textContent = '➕ เพิ่มหนังสือ';
     }
 
     async function handleAddMember(event) {
       event.preventDefault();
-      const memberId = document.getElementById('memberId').value;
-      if (members.some(m => m.id === memberId)) { showToast('มีรหัสสมาชิกนี้แล้ว', 'warning'); return;
+      const id = document.getElementById('memberId').value;
+      if (members.some(m => m.id === id)) { showToast('มีรหัสสมาชิกนี้แล้ว', 'warning'); return;
       }
-      const member = { id: memberId, name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value || '', phone: document.getElementById('memberPhone').value, type: document.getElementById('memberType').value, timestamp: Date.now() };
-      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
-      const success = await saveToSheets('members', member);
-      if (success) { members.push(member); updateAllViews(); showToast('เพิ่มสมาชิกสำเร็จ!', 'success'); event.target.reset();
-      }
-      btn.disabled = false; btn.textContent = '➕ เพิ่มสมาชิก';
+      const m = { id: id, name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value ||
+      '', phone: document.getElementById('memberPhone').value, type: document.getElementById('memberType').value, timestamp: Date.now() };
+      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'บันทึก...';
+      const s = await saveToSheets('members', m); if (s) { members.push(m); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false;
+      btn.textContent = '➕ เพิ่มสมาชิก';
     }
-
-    // ---------------------- MULTI-BORROW LOGIC ----------------------
 
     function addToCart() {
         const input = document.getElementById('borrowBookIdInput');
-        const bookId = input.value.trim();
-        
-        if (!bookId) return;
-
-        const book = books.find(b => b.id === bookId);
-        if (!book) {
-            showToast('ไม่พบรหัสหนังสือในระบบ', 'warning');
-            return;
-        }
-
-        const alreadyInCart = borrowCart.filter(item => item.id === bookId).length;
-        if (parseInt(book.available) - alreadyInCart <= 0) {
-            showToast('หนังสือเล่มนี้หมดแล้ว (หรืออยู่ในตะกร้าครบตามจำนวนที่มีแล้ว)', 'warning');
-            return;
-        }
-
+        const id = input.value.trim(); if (!id) return;
+        const book = books.find(b => b.id === id); if (!book) { showToast('ไม่พบรหัสหนังสือ', 'warning');
+        return; }
+        const inCart = borrowCart.filter(i => i.id === id).length;
+        if (parseInt(book.available) - inCart <= 0) { showToast('หนังสือหมดแล้ว', 'warning'); return; }
         borrowCart.push(book);
-        input.value = ''; 
-        input.focus();
-        updateCartTable();
+        input.value = ''; input.focus(); updateCartTable();
     }
-
-    function removeFromCart(index) {
-        borrowCart.splice(index, 1);
-        updateCartTable();
+    function removeFromCart(i) { borrowCart.splice(i, 1); updateCartTable();
     }
-
+    
+    // ✅ Modified: Add data-label for mobile card view
     function updateCartTable() {
         const tbody = document.getElementById('borrowCartTableBody');
         const btn = document.getElementById('borrowSubmitBtn');
-
-        if (borrowCart.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr>';
-            btn.textContent = '📖 ยืนยันการยืมหนังสือทั้งหมด';
-            return;
-        }
-
-        tbody.innerHTML = borrowCart.map((book, index) => `
-            <tr>
-                <td>${book.id}</td>
-                <td>${book.title}</td>
-                <td style="text-align: center;">
-                    <button type="button" class="button-danger" style="padding: 5px 10px; font-size: 0.8em;" onclick="removeFromCart(${index})">❌ ลบ</button>
-                </td>
-            </tr>
-        `).join('');
-        btn.textContent = `📖 ยืนยันการยืมหนังสือทั้งหมด (${borrowCart.length} เล่ม)`;
+        if (borrowCart.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr>';
+        btn.textContent = '📖 ยืนยันการยืมหนังสือทั้งหมด'; return; }
+        tbody.innerHTML = borrowCart.map((b, i) => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="จัดการ" style="text-align: center;"><button type="button" class="button-danger" style="padding: 5px 10px; font-size: 0.8em;" onclick="removeFromCart(${i})">ลบ</button></td></tr>`).join('');
+        btn.textContent = `📖 ยืนยัน (${borrowCart.length} เล่ม)`;
     }
 
     async function handleBorrow(event) {
       event.preventDefault();
-      let memberIdInput = document.getElementById('borrowMemberId').value;
-      let memberId = memberIdInput;
-      
-      if (memberIdInput.includes(':')) {
-          memberId = memberIdInput.split(':')[0].trim();
-      }
-
-      const member = members.find(m => m.id === memberId);
-      
-      if (!member) { showToast('ไม่พบรหัสสมาชิก (กรุณาเลือกจากรายการหรือพิมพ์รหัสให้ถูกต้อง)', 'warning');
+      let mid = document.getElementById('borrowMemberId').value; if (mid.includes(':')) mid = mid.split(':')[0].trim();
+      const mem = members.find(m => m.id === mid);
+      if (!mem) { showToast('ไม่พบรหัสสมาชิก', 'warning'); return; }
+      if (borrowCart.length === 0) { showToast('เพิ่มหนังสืออย่างน้อย 1 เล่ม', 'warning');
       return; }
-      if (borrowCart.length === 0) { showToast('กรุณาเพิ่มรายการหนังสืออย่างน้อย 1 เล่ม', 'warning'); return;
-      }
-
-      const btn = document.getElementById('borrowSubmitBtn');
-      btn.disabled = true;
-      
-      let successCount = 0;
-      let failCount = 0;
-
+      const btn = document.getElementById('borrowSubmitBtn'); btn.disabled = true;
+      let success = 0, fail = 0;
       for (let i = 0; i < borrowCart.length; i++) {
-          const bookInCart = borrowCart[i];
-          btn.textContent = `⏳ กำลังบันทึก... (${i + 1}/${borrowCart.length})`;
-          
-          const liveBook = books.find(b => b.id === bookInCart.id);
-          if (liveBook && parseInt(liveBook.available) > 0) {
-              const borrow = { 
-                  id: 'BR' + Date.now() + Math.floor(Math.random() * 1000), 
-                  memberId: memberId, 
-                  bookId: liveBook.id, 
-                  bookTitle: liveBook.title, 
-                  borrowDate: document.getElementById('borrowDate').value, 
-                  dueDate: document.getElementById('dueDate').value, 
-                  returnDate: '', 
-                  status: 'borrowed', 
-                  notes: document.getElementById('borrowNotes').value || '', 
-                  timestamp: Date.now() 
-              };
-              const success = await saveToSheets('borrows', borrow);
-              if (success) {
-                  liveBook.available = parseInt(liveBook.available) - 1;
-                  await saveToSheets('books', liveBook);
-                  borrowRecords.push(borrow); 
-                  successCount++;
-              } else {
-                  failCount++;
-              }
-          } else {
-              failCount++;
-          }
+          const bCart = borrowCart[i];
+          btn.textContent = `⏳ บันทึก... (${i+1}/${borrowCart.length})`;
+          const liveB = books.find(b => b.id === bCart.id);
+          if (liveB && parseInt(liveB.available) > 0) {
+              const rec = { id: 'BR'+Date.now()+Math.floor(Math.random()*1000), memberId: mid, bookId: liveB.id, bookTitle: liveB.title, borrowDate: document.getElementById('borrowDate').value, dueDate: document.getElementById('dueDate').value, returnDate: '', status: 'borrowed', notes: document.getElementById('borrowNotes').value ||
+              '', timestamp: Date.now() };
+              const s = await saveToSheets('borrows', rec); if (s) { liveB.available = parseInt(liveB.available)-1; await saveToSheets('books', liveB); borrowRecords.push(rec);
+              success++; } else fail++;
+          } else fail++;
       }
-
       updateAllViews();
-      if (failCount === 0) {
-          showToast(`ยืมหนังสือสำเร็จครบ ${successCount} เล่ม!`, 'success');
-          borrowCart = []; 
-          updateCartTable();
-          event.target.reset(); 
-          
-          const today = new Date().toISOString().split('T')[0];
-          const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + LOAN_DAYS);
-          document.getElementById('borrowDate').value = today; 
-          document.getElementById('dueDate').value = dueDate.toISOString().split('T')[0];
-      } else {
-          showToast(`ยืมสำเร็จ ${successCount} เล่ม, ล้มเหลว ${failCount} เล่ม (อาจหนังสือหมด)`, 'warning');
-          borrowCart = []; 
-          updateCartTable();
+      if (fail === 0) { showToast(`ยืมสำเร็จ ${success} เล่ม!`, 'success'); borrowCart = []; updateCartTable(); event.target.reset(); const t = new Date();
+      const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0];
       }
-
+      else { showToast(`สำเร็จ ${success}, ล้มเหลว ${fail}`, 'warning'); borrowCart = []; updateCartTable();
+      }
       btn.disabled = false;
     }
 
-    // --------------------------------------------------------------------
-
-    function returnBook(borrowId) {
-      const borrow = borrowRecords.find(b => b.id === borrowId);
-      if (!borrow) return;
-      showConfirmModal('ยืนยันการคืน', `คืนหนังสือ: ${borrow.bookTitle}?`, async () => {
-          borrow.status = 'returned'; borrow.returnDate = new Date().toISOString().split('T')[0];
-          const success = await saveToSheets('borrows', borrow);
-          if (success) {
-              const book = books.find(b => b.id === borrow.bookId);
-              if (book) { book.available = parseInt(book.available) + 1; await saveToSheets('books', book); }
-              updateAllViews(); showToast('คืนหนังสือสำเร็จ!', 'success');
-          }
+    function returnBook(bid) {
+      const b = borrowRecords.find(i => i.id === bid);
+      if (!b) return;
+      showConfirmModal('ยืนยันการคืน', `คืนหนังสือ: ${b.bookTitle}?`, async () => {
+          b.status = 'returned'; b.returnDate = new Date().toISOString().split('T')[0];
+          const s = await saveToSheets('borrows', b); if (s) { const book = books.find(k => k.id === b.bookId); if (book) { book.available = parseInt(book.available)+1; await saveToSheets('books', book); } updateAllViews(); showToast('คืนสำเร็จ!', 'success'); }
       });
     }
 
-    // ✅ NEW: ฟังก์ชันแก้ไขประวัติ
-    function editHistory(recordId) {
-        const record = borrowRecords.find(r => r.id === recordId);
-        if (!record) return;
-
-        // ดึงชื่อสมาชิกมาแสดง
-        const member = members.find(m => m.id === record.memberId);
-        const memberName = member ? member.name : '-';
-
-        const formHtml = `
-            <input type="hidden" id="editHistoryId" value="${record.id}">
-            <div class="form-layout">
-                <div class="input-group"><label>รหัสรายการ (แก้ไขไม่ได้)</label> <input type="text" value="${record.id}" disabled></div>
-                <div class="input-group"><label>ผู้ยืม (แก้ไขไม่ได้)</label> <input type="text" value="${memberName}" disabled></div>
-                <div class="input-group"><label>หนังสือ (แก้ไขไม่ได้)</label> <input type="text" value="${record.bookTitle}" disabled></div>
-                
-                <div class="input-group"><label>วันที่ยืม (แก้ไขได้) *</label> <input type="date" id="editBorrowDate" value="${record.borrowDate}" required></div>
-                <div class="input-group"><label>กำหนดคืน (แก้ไขได้) *</label> <input type="date" id="editDueDate" value="${record.dueDate}" required></div>
-                
-                <div class="input-group" style="background: #e3f2fd; padding: 10px; border-radius: 8px;">
-                    <label style="color: #0d47a1;">วันที่คืน (ลงเมื่อคืนหนังสือแล้ว)</label> 
-                    <input type="date" id="editReturnDate" value="${record.returnDate || ''}">
-                    <p style="font-size: 0.8em; color: #666; margin-top: 5px;">* หากใส่วันที่คืน ระบบจะเปลี่ยนสถานะเป็น "คืนแล้ว" อัตโนมัติ</p>
-                </div>
-            </div>
-        `;
-        showEditModal(`✏️ แก้ไขประวัติการยืม`, formHtml, updateHistoryDetails);
+    function editHistory(rid) {
+        const r = borrowRecords.find(i => i.id === rid);
+        if (!r) return;
+        const m = members.find(k => k.id === r.memberId); const mName = m ? m.name : '-';
+        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="form-layout"><div class="input-group"><label>รหัสรายการ</label> <input type="text" value="${r.id}" disabled></div><div class="input-group"><label>ผู้ยืม</label> <input type="text" value="${mName}" disabled></div><div class="input-group"><label>หนังสือ</label> <input type="text" value="${r.bookTitle}" disabled></div><div class="input-group"><label>วันที่ยืม *</label> <input type="date" id="editBorrowDate" value="${r.borrowDate}" required></div><div class="input-group"><label>กำหนดคืน *</label> <input type="date" id="editDueDate" value="${r.dueDate}" required></div><div class="input-group" style="background: #e3f2fd; padding: 10px; border-radius: 8px;"><label style="color: #0d47a1;">วันที่คืน</label> <input type="date" id="editReturnDate" value="${r.returnDate || ''}"><p style="font-size: 0.8em; color: #666; margin-top: 5px;">* ใส่วันที่คืน = คืนแล้ว</p></div></div>`;
+        showEditModal(`✏️ แก้ไขประวัติ`, html, updateHistoryDetails);
     }
-
     async function updateHistoryDetails() {
         const id = document.getElementById('editHistoryId').value;
-        const oldRecord = borrowRecords.find(r => r.id === id);
-        
-        // อัปเดตข้อมูลใหม่
-        const updatedRecord = {
-            ...oldRecord,
-            borrowDate: document.getElementById('editBorrowDate').value,
-            dueDate: document.getElementById('editDueDate').value,
-            returnDate: document.getElementById('editReturnDate').value
-        };
-
-        // Logic ปรับสถานะอัตโนมัติตามวันที่คืน
-        if (updatedRecord.returnDate) {
-           updatedRecord.status = 'returned';
-        } else {
-            updatedRecord.status = 'borrowed'; // ถ้าลบวันคืนออก ให้กลับเป็นสถานะยืม
-        }
-
-        // อัปเดตหน้าจอทันที (Optimistic update)
-        const index = borrowRecords.findIndex(r => r.id === id);
-        if (index !== -1) borrowRecords[index] = updatedRecord;
-
-        showLoading();
-        const success = await saveToSheets('borrows', updatedRecord);
-        hideLoading();
-        if (success) {
-            updateAllViews();
-            showToast('แก้ไขข้อมูลสำเร็จ', 'success');
-            return true;
-        } else {
-            // ถ้าพังให้คืนค่าเดิม
-            if (index !== -1) borrowRecords[index] = oldRecord;
-            updateAllViews();
-            return false;
+        const old = borrowRecords.find(r => r.id === id);
+        const up = { ...old, borrowDate: document.getElementById('editBorrowDate').value, dueDate: document.getElementById('editDueDate').value, returnDate: document.getElementById('editReturnDate').value };
+        up.status = up.returnDate ? 'returned' : 'borrowed';
+        const idx = borrowRecords.findIndex(r => r.id === id);
+        if (idx !== -1) borrowRecords[idx] = up;
+        showLoading(); const s = await saveToSheets('borrows', up); hideLoading();
+        if (s) { updateAllViews();
+        showToast('แก้ไขสำเร็จ', 'success'); return true; } else { if (idx !== -1) borrowRecords[idx] = old; updateAllViews(); return false;
         }
     }
 
-    function editBook(bookId) {
-      const book = findItem(books, bookId);
-      if (!book) return;
-      const categoryOptions = ['นิยาย', 'การ์ตูน', 'ความรู้ทั่วไป', 'สาระทักษะการเรียนรู้', 'สาระความรู้พื้นฐาน', 'สาระการประกอบอาชีพ', 'สาระทักษะการดำเนินชีวิต', 'สาระการพัฒนาสังคม', 'อื่นๆ'].map(cat => `<option value="${cat}" ${book.category === cat ? 'selected' : ''}>${cat}</option>`).join('');
-      const formHtml = `<input type="hidden" id="editBookId" value="${book.id}"><div class="form-layout"><div class="input-group"><label>ชื่อหนังสือ *</label> <input type="text" id="editBookTitle" value="${book.title}" required></div><div class="input-group"><label>ผู้แต่ง *</label> <input type="text" id="editBookAuthor" value="${book.author}" required></div><div class="input-group"><label>หมวดหมู่ *</label> <select id="editBookCategory" required><option value="">เลือกหมวดหมู่</option>${categoryOptions}</select></div><div class="input-group"><label>ISBN</label> <input type="text" id="editBookISBN" value="${book.isbn || ''}"></div><div class="input-group"><label>จำนวนทั้งหมด *</label> <input type="number" id="editBookQuantity" value="${book.quantity}" required min="1"></div><div class="input-group"><label>พร้อมให้ยืม (Auto)</label> <input type="number" value="${book.available}" disabled></div></div>`;
-      showEditModal(`✏️ แก้ไขหนังสือ: ${book.title}`, formHtml, updateBookDetails);
+    function editBook(bid) {
+      const b = findItem(books, bid);
+      if (!b) return;
+      const cats = ['นิยาย','การ์ตูน','ความรู้ทั่วไป','สาระทักษะการเรียนรู้','สาระความรู้พื้นฐาน','สาระการประกอบอาชีพ','สาระทักษะการดำเนินชีวิต','สาระการพัฒนาสังคม','อื่นๆ'].map(c => `<option value="${c}" ${b.category === c ? 'selected' : ''}>${c}</option>`).join('');
+      const html = `<input type="hidden" id="editBookId" value="${b.id}"><div class="form-layout"><div class="input-group"><label>ชื่อหนังสือ *</label> <input type="text" id="editBookTitle" value="${b.title}" required></div><div class="input-group"><label>ผู้แต่ง *</label> <input type="text" id="editBookAuthor" value="${b.author}" required></div><div class="input-group"><label>หมวดหมู่ *</label> <select id="editBookCategory" required><option value="">เลือกหมวดหมู่</option>${cats}</select></div><div class="input-group"><label>ISBN</label> <input type="text" id="editBookISBN" value="${b.isbn||''}"></div><div class="input-group"><label>จำนวนทั้งหมด *</label> <input type="number" id="editBookQuantity" value="${b.quantity}" required min="1"></div><div class="input-group"><label>พร้อมให้ยืม</label> <input type="number" value="${b.available}" disabled></div></div>`;
+      showEditModal(`✏️ แก้ไขหนังสือ`, html, updateBookDetails);
     }
-
     async function updateBookDetails() {
       const id = document.getElementById('editBookId').value;
-      const oldBook = findItem(books, id);
-      const newQuantity = parseInt(document.getElementById('editBookQuantity').value);
-      if (newQuantity < parseInt(oldBook.quantity) - parseInt(oldBook.available)) { showToast('จำนวนต้องไม่น้อยกว่าที่ถูกยืม', 'warning'); return false;
+      const old = findItem(books, id);
+      const newQ = parseInt(document.getElementById('editBookQuantity').value);
+      if (newQ < parseInt(old.quantity) - parseInt(old.available)) { showToast('จำนวนน้อยกว่าที่ถูกยืม', 'warning'); return false;
       }
-      const newAvailable = parseInt(oldBook.available) + (newQuantity - parseInt(oldBook.quantity));
-      const updatedBook = { id: id, title: document.getElementById('editBookTitle').value, author: document.getElementById('editBookAuthor').value, category: document.getElementById('editBookCategory').value, isbn: document.getElementById('editBookISBN').value, quantity: newQuantity, available: newAvailable, timestamp: oldBook.timestamp };
-      const index = books.findIndex(b => b.id === id); if (index !== -1) books[index] = updatedBook;
+      const newAv = parseInt(old.available) + (newQ - parseInt(old.quantity));
+      const up = { id: id, title: document.getElementById('editBookTitle').value, author: document.getElementById('editBookAuthor').value, category: document.getElementById('editBookCategory').value, isbn: document.getElementById('editBookISBN').value, quantity: newQ, available: newAv, timestamp: old.timestamp };
+      const idx = books.findIndex(b => b.id === id); if (idx !== -1) books[idx] = up;
       showLoading();
-      const success = await saveToSheets('books', updatedBook);
-      hideLoading();
-      if (success) { updateAllViews(); showToast('แก้ไขสำเร็จ!', 'success'); return true;
-      }
-      else { if (index !== -1) books[index] = oldBook; updateAllViews(); return false;
+      const s = await saveToSheets('books', up); hideLoading();
+      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true;
+      } else { if (idx !== -1) books[idx] = old; updateAllViews(); return false;
       }
     }
 
-    function editMember(memberId) {
-      const member = findItem(members, memberId);
-      if (!member) return;
-      const types = [
-          { val: 'ประถมศึกษา', text: 'นักศึกษา ระดับประถมศึกษา' },
-          { val: 'มัธยมศึกษาตอนต้น', text: 'นักศึกษา ระดับมัธยมศึกษาตอนต้น' },
-          { val: 'มัธยมศึกษาตอนปลาย', text: 'นักศึกษา ระดับมัธยมศึกษาตอนปลาย' },
-          { val: 'ครู', text: 'ครู' },
-          { val: 'บุคลากร', text: 'บุคลากร' },
-          { val: 'ทั่วไป', text: 'บุคคลทั่วไป' }
-      ];
-      const typeOptions = types.map(t => `<option value="${t.val}" ${member.type === t.val ? 'selected' : ''}>${t.text}</option>`).join('');
-      const formHtml = `<input type="hidden" id="editMemberId" value="${member.id}"><div class="form-layout"><div class="input-group"><label>รหัส (แก้ไขไม่ได้)</label> <input type="text" value="${member.id}" disabled></div><div class="input-group"><label>ชื่อ-สกุล *</label> <input type="text" id="editMemberName" value="${member.name}" required></div><div class="input-group"><label>อีเมล</label> <input type="email" id="editMemberEmail" value="${member.email || ''}"></div><div class="input-group"><label>เบอร์โทร *</label> <input type="tel" id="editMemberPhone" value="${member.phone}" required></div><div class="input-group"><label>ประเภท/ระดับชั้น *</label> <select id="editMemberType" required><option value="">เลือกประเภท</option>${typeOptions}</select></div></div>`;
-      showEditModal(`✏️ แก้ไขสมาชิก: ${member.name}`, formHtml, updateMemberDetails);
+    function editMember(mid) {
+      const m = findItem(members, mid);
+      if (!m) return;
+      const types = [{v:'ประถมศึกษา',t:'ประถมศึกษา'},{v:'มัธยมศึกษาตอนต้น',t:'มัธยมศึกษาตอนต้น'},{v:'มัธยมศึกษาตอนปลาย',t:'มัธยมศึกษาตอนปลาย'},{v:'ครู',t:'ครู'},{v:'บุคลากร',t:'บุคลากร'},{v:'ทั่วไป',t:'บุคคลทั่วไป'}].map(t => `<option value="${t.v}" ${m.type === t.v ? 'selected' : ''}>${t.t}</option>`).join('');
+      const html = `<input type="hidden" id="editMemberId" value="${m.id}"><div class="form-layout"><div class="input-group"><label>ชื่อ-สกุล *</label> <input type="text" id="editMemberName" value="${m.name}" required></div><div class="input-group"><label>อีเมล</label> <input type="email" id="editMemberEmail" value="${m.email||''}"></div><div class="input-group"><label>เบอร์โทร *</label> <input type="tel" id="editMemberPhone" value="${m.phone}" required></div><div class="input-group"><label>ประเภท *</label> <select id="editMemberType" required>${types}</select></div></div>`;
+      showEditModal(`✏️ แก้ไขสมาชิก`, html, updateMemberDetails);
     }
-
     async function updateMemberDetails() {
       const id = document.getElementById('editMemberId').value;
-      const oldMember = findItem(members, id);
-      const updatedMember = { id: id, name: document.getElementById('editMemberName').value, email: document.getElementById('editMemberEmail').value, phone: document.getElementById('editMemberPhone').value, type: document.getElementById('editMemberType').value, timestamp: oldMember.timestamp };
-      const index = members.findIndex(m => m.id === id); if (index !== -1) members[index] = updatedMember;
+      const old = findItem(members, id);
+      const up = { id: id, name: document.getElementById('editMemberName').value, email: document.getElementById('editMemberEmail').value, phone: document.getElementById('editMemberPhone').value, type: document.getElementById('editMemberType').value, timestamp: old.timestamp };
+      const idx = members.findIndex(m => m.id === id); if (idx !== -1) members[idx] = up;
       showLoading();
-      const success = await saveToSheets('members', updatedMember);
-      hideLoading();
-      if (success) { updateAllViews(); showToast('แก้ไขสำเร็จ!', 'success'); return true;
-      }
-      else { if (index !== -1) members[index] = oldMember; updateAllViews(); return false;
+      const s = await saveToSheets('members', up); hideLoading();
+      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true;
+      } else { if (idx !== -1) members[idx] = old; updateAllViews(); return false;
       }
     }
 
-    function deleteBook(bookId) {
-      const book = books.find(b => b.id === bookId);
-      if (!book) return;
-      if (borrowRecords.some(b => b.bookId === bookId && b.status === 'borrowed')) { showToast('หนังสือถูกยืมอยู่ ลบไม่ได้', 'error'); return;
-      }
-      showConfirmModal('ลบหนังสือ', `ยืนยันลบ: ${book.title}?`, async () => {
-          const success = await deleteFromSheets('books', bookId);
-          if (success) { books = books.filter(b => b.id !== bookId); updateAllViews(); showToast('ลบสำเร็จ!', 'success'); }
-      });
+    function deleteBook(id) { const b = books.find(i => i.id === id);
+      if (!b) return; if (borrowRecords.some(r => r.bookId === id && r.status === 'borrowed')) { showToast('หนังสือถูกยืมอยู่', 'error'); return;
+      } showConfirmModal('ลบหนังสือ', `ลบ: ${b.title}?`, async () => { const s = await deleteFromSheets('books', id); if (s) { books = books.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } });
+    }
+    function deleteMember(id) { const m = members.find(i => i.id === id); if (!m) return;
+      if (borrowRecords.some(r => r.memberId === id && r.status === 'borrowed')) { showToast('สมาชิกยืมของอยู่', 'error'); return;
+      } showConfirmModal('ลบสมาชิก', `ลบ: ${m.name}?`, async () => { const s = await deleteFromSheets('members', id); if (s) { members = members.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } });
     }
 
-    function deleteMember(memberId) {
-      const member = members.find(m => m.id === memberId);
-      if (!member) return;
-      if (borrowRecords.some(b => b.memberId === memberId && b.status === 'borrowed')) { showToast('สมาชิกยืมหนังสืออยู่ ลบไม่ได้', 'error'); return;
-      }
-      showConfirmModal('ลบสมาชิก', `ยืนยันลบ: ${member.name}?`, async () => {
-          const success = await deleteFromSheets('members', memberId);
-          if (success) { members = members.filter(m => m.id !== memberId); updateAllViews(); showToast('ลบสำเร็จ!', 'success'); }
-      });
-    }
-
+    // ✅ Modified: Add data-label for mobile card view
     function updateBooksTable() {
-      const searchTerm = document.getElementById('searchBooks')?.value.toLowerCase() || '';
-      const filteredBooks = books.filter(book => book.id.toLowerCase().includes(searchTerm) || book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm) || book.category.toLowerCase().includes(searchTerm));
+      const term = document.getElementById('searchBooks')?.value.toLowerCase() ||
+      '';
+      const list = books.filter(b => b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term));
       const tbody = document.getElementById('booksTableBody');
-      if (filteredBooks.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="empty-message"><div class="empty-icon">📚</div><h3>ยังไม่มีหนังสือ</h3></td></tr>`; return;
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="empty-message"><div class="empty-icon">📚</div><h3>ยังไม่มีหนังสือ</h3></td></tr>`; return;
       }
-      tbody.innerHTML = filteredBooks.map(book => `<tr><td>${book.id}</td><td>${book.title}</td><td>${book.author}</td><td>${book.category}</td><td>${book.isbn || '-'}</td><td>${book.quantity}</td><td>${book.available}</td><td><div class="action-button-group"><button class="button-secondary" onclick="editBook('${book.id}')">✏️</button><button class="button-danger" onclick="deleteBook('${book.id}')">🗑️</button></div></td></tr>`).join('');
+      tbody.innerHTML = list.map(b => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="ผู้แต่ง">${b.author}</td><td data-label="หมวดหมู่">${b.category}</td><td data-label="ISBN">${b.isbn||'-'}</td><td data-label="จำนวน">${b.quantity}</td><td data-label="เหลือ">${b.available}</td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editBook('${b.id}')">✏️</button><button class="button-danger" onclick="deleteBook('${b.id}')">🗑️</button></div></td></tr>`).join('');
     }
 
+    // ✅ Modified: Add data-label for mobile card view
     function updateMembersTable() {
-      const searchTerm = document.getElementById('searchMembers')?.value.toLowerCase() || '';
-      const filterType = document.getElementById('filterMemberType')?.value || '';
-      const filteredMembers = members.filter(member => {
-        const matchSearch = member.id.toLowerCase().includes(searchTerm) || member.name.toLowerCase().includes(searchTerm);
-        const matchType = !filterType || member.type === filterType;
-        return matchSearch && matchType;
-      });
+      const term = document.getElementById('searchMembers')?.value.toLowerCase() ||
+      ''; const type = document.getElementById('filterMemberType')?.value || '';
+      const list = members.filter(m => (m.id.toLowerCase().includes(term) || m.name.toLowerCase().includes(term)) && (!type || m.type === type));
       const tbody = document.getElementById('membersTableBody');
-      if (filteredMembers.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-message"><div class="empty-icon">👥</div><h3>ยังไม่มีสมาชิก</h3></td></tr>`; return;
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-message"><div class="empty-icon">👥</div><h3>ยังไม่มีสมาชิก</h3></td></tr>`; return;
       }
-      tbody.innerHTML = filteredMembers.map(member => `<tr><td>${member.id}</td><td>${member.name}</td><td>${member.email || '-'}</td><td>${member.phone}</td><td>${member.type}</td><td><div class="action-button-group"><button class="button-secondary" onclick="editMember('${member.id}')">✏️</button><button class="button-danger" onclick="deleteMember('${member.id}')">🗑️</button></div></td></tr>`).join('');
+      tbody.innerHTML = list.map(m => `<tr><td data-label="รหัส">${m.id}</td><td data-label="ชื่อ-สกุล">${m.name}</td><td data-label="อีเมล">${m.email||'-'}</td><td data-label="โทร">${m.phone}</td><td data-label="ประเภท">${m.type}</td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editMember('${m.id}')">✏️</button><button class="button-danger" onclick="deleteMember('${m.id}')">🗑️</button></div></td></tr>`).join('');
     }
 
+    // ✅ Modified: Add data-label for mobile card view
     function updateHistoryTable() {
-      const searchTerm = document.getElementById('searchHistory')?.value.toLowerCase() || '';
-      const filterStatus = document.getElementById('filterStatus')?.value || '';
-      let filteredHistory = borrowRecords.filter(record => {
-        // ✅ เพิ่มการค้นหาด้วยชื่อสมาชิก
-        const member = members.find(m => m.id === record.memberId);
-        const memberName = member ? member.name.toLowerCase() : '';
-
-        const matchSearch = record.memberId.toLowerCase().includes(searchTerm) || 
-                            record.bookId.toLowerCase().includes(searchTerm) || 
-                            record.bookTitle.toLowerCase().includes(searchTerm) ||
-                            memberName.includes(searchTerm); 
-        
-        let matchStatus = true;
-        if (filterStatus === 'borrowed') matchStatus = record.status === 'borrowed' && new Date(record.dueDate) >= new Date();
-        else if (filterStatus === 'returned') matchStatus = record.status === 'returned';
-        else if (filterStatus === 'overdue') matchStatus = record.status === 'borrowed' && new Date(record.dueDate) < new Date();
-        return matchSearch && matchStatus;
+      const term = document.getElementById('searchHistory')?.value.toLowerCase() ||
+      ''; const status = document.getElementById('filterStatus')?.value || '';
+      let list = borrowRecords.filter(r => {
+        const m = members.find(i => i.id === r.memberId); const mName = m ? m.name.toLowerCase() : '';
+        const match = r.memberId.toLowerCase().includes(term) || r.bookId.toLowerCase().includes(term) || r.bookTitle.toLowerCase().includes(term) || mName.includes(term);
+        let sMatch = true; if (status === 'borrowed') sMatch = r.status === 'borrowed' && new Date(r.dueDate) >= new Date(); else if (status === 'returned') sMatch = r.status === 'returned'; else if (status === 'overdue') sMatch = r.status === 'borrowed' && 
+        new Date(r.dueDate) < new Date();
+        return match && sMatch;
       });
-      filteredHistory.sort((a, b) => b.timestamp - a.timestamp);
+      list.sort((a, b) => b.timestamp - a.timestamp);
       const tbody = document.getElementById('historyTableBody');
-      if (filteredHistory.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="empty-message"><div class="empty-icon">📋</div><h3>ยังไม่มีประวัติ</h3></td></tr>`; return;
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-message"><div class="empty-icon">📋</div><h3>ยังไม่มีประวัติ</h3></td></tr>`; return;
       }
-      tbody.innerHTML = filteredHistory.map(record => {
-        let statusBadge = '', statusClass = '';
-        if (record.status === 'returned') { statusBadge = 'คืนแล้ว'; statusClass = 'status-returned'; }
-        else if (new Date(record.dueDate) < new Date()) { statusBadge = 'เกินกำหนด'; statusClass = 'status-overdue'; }
-        else { statusBadge = 'กำลังยืม'; statusClass = 'status-borrowed'; }
-        
-        // ✅ เพิ่มการแสดงผลชื่อผู้ยืมในตาราง
-        const member = members.find(m => m.id === record.memberId);
-        const memberName = member ? member.name : '-';
-
-        // ✅ เพิ่มปุ่มแก้ไขใน Action Group
-        return `
-          <tr>
-            <td>${record.memberId}</td>
-            <td>${memberName}</td>
-            <td>${record.bookId}</td>
-            <td>${record.bookTitle}</td>
-            <td>${record.borrowDate}</td>
-            <td>${record.dueDate}</td>
-            <td>${record.returnDate || '-'}</td>
-            <td><span class="status-badge ${statusClass}">${statusBadge}</span></td>
-            <td>
-              <div class="action-button-group">
-                <button class="button-secondary" onclick="editHistory('${record.id}')">✏️ แก้ไข</button>
-                ${record.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${record.id}')">📥 คืน</button>` : ''}
-              </div>
-            </td>
-          </tr>`;
+      tbody.innerHTML = list.map(r => {
+        let badge = '', cls = ''; const m = members.find(i => i.id === r.memberId); const mName = m ? m.name : '-';
+        if (r.status === 'returned') { badge = 'คืนแล้ว'; cls = 'status-returned'; } else if (new Date(r.dueDate) < new Date()) { badge = 'เกินกำหนด'; cls = 'status-overdue'; } else { badge = 'กำลังยืม'; cls = 'status-borrowed'; }
+        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ">${r.bookTitle}</td><td data-label="วันที่ยืม">${r.borrowDate}</td><td data-label="กำหนดคืน">${r.dueDate}</td><td data-label="วันที่คืน">${r.returnDate||'-'}</td><td 
+        data-label="สถานะ"><span class="status-badge ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
       }).join('');
     }
 
     function updateAvailableBooksList() {
-      const searchTerm = document.getElementById('searchAvailableBooks')?.value.toLowerCase() || '';
-      let availableBooks = books.filter(book => parseInt(book.available) > 0 && (book.id.toLowerCase().includes(searchTerm) || book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm)));
+      const term = document.getElementById('searchAvailableBooks')?.value.toLowerCase() || '';
+      let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)));
       const container = document.getElementById('availableBooksList');
-      if (availableBooks.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบหนังสือ</h3></div>'; return;
+      if (list.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบหนังสือ</h3></div>'; return;
       }
-      container.innerHTML = availableBooks.map(book => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${book.title}</div><div class="book-card-author">${book.author}</div></div><span class="status-badge status-available">${book.available} เล่ม</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${book.id}</div></div></div>`).join('');
+      container.innerHTML = list.map(b => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.title}</div><div class="book-card-author">${b.author}</div></div><span class="status-badge status-available">${b.available} เล่ม</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${b.id}</div></div></div>`).join('');
     }
 
-    // ✅ ปรับปรุงฟังก์ชันคืนหนังสือให้ค้นหาด้วยชื่อได้
     function updateBorrowedBooksList() {
-      const searchTerm = document.getElementById('searchBorrowed')?.value.toLowerCase() || '';
-      let borrows = borrowRecords.filter(b => b.status === 'borrowed');
-      
-      borrows = borrows.filter(borrow => {
-        // ค้นหาชื่อสมาชิกเพื่อนำมาตรวจสอบ
-        const member = members.find(m => m.id === borrow.memberId);
-        const memberName = member ? member.name.toLowerCase() : '';
-        
-        return (
-          borrow.memberId.toLowerCase().includes(searchTerm) || 
-          borrow.bookId.toLowerCase().includes(searchTerm) || 
-          borrow.bookTitle.toLowerCase().includes(searchTerm) ||
-          memberName.includes(searchTerm) 
-        );
+      const term = document.getElementById('searchBorrowed')?.value.toLowerCase() || '';
+      let list = borrowRecords.filter(b => b.status === 'borrowed').filter(b => {
+        const m = members.find(i => i.id === b.memberId); const mName = m ? m.name.toLowerCase() : '';
+        return b.memberId.toLowerCase().includes(term) || b.bookId.toLowerCase().includes(term) || b.bookTitle.toLowerCase().includes(term) || mName.includes(term);
       });
-      borrows.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+      list.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       const container = document.getElementById('borrowedBooksList');
-      if (borrows.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบรายการยืม</h3></div>'; return;
+      if (list.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบรายการยืม</h3></div>'; return;
       }
-      
-      container.innerHTML = borrows.map(borrow => {
-        const member = members.find(m => m.id === borrow.memberId);
-        const isOverdue = new Date(borrow.dueDate) < new Date();
-        return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${borrow.bookTitle}</div><div class="book-card-author">ผู้ยืม: ${member ? member.name : borrow.memberId}</div></div><span class="status-badge ${isOverdue ? 'status-overdue' : 'status-borrowed'}">${isOverdue ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">กำหนดคืน:</span> ${borrow.dueDate}</div></div><div style="margin-top: 15px;"><button class="button-success" onclick="returnBook('${borrow.id}')">📥 คืน</button></div></div>`;
+      container.innerHTML = list.map(b => {
+        const m = members.find(i => i.id === b.memberId); const isOver = new Date(b.dueDate) < new Date();
+        return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.bookTitle}</div><div class="book-card-author">ผู้ยืม: ${m ? m.name : b.memberId}</div></div><span class="status-badge ${isOver ? 'status-overdue' : 'status-borrowed'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">กำหนดคืน:</span> ${b.dueDate}</div></div><div style="margin-top: 15px;"><button class="button-success" onclick="returnBook('${b.id}')">📥 คืน</button></div></div>`;
       }).join('');
     }
 
-    function searchBooks() { updateBooksTable(); }
-    function searchMembers() { updateMembersTable(); }
-    function searchHistory() { updateHistoryTable(); }
-    function searchAvailableBooks() { updateAvailableBooksList(); }
-    function searchBorrowedBooks() { updateBorrowedBooksList(); }
+    function searchBooks() { updateBooksTable(); } function searchMembers() { updateMembersTable(); } function searchHistory() { updateHistoryTable();
+    } function searchAvailableBooks() { updateAvailableBooksList(); } function searchBorrowedBooks() { updateBorrowedBooksList();
+    }
 
     function exportHistory() {
-      if (borrowRecords.length === 0) { showToast('ไม่มีข้อมูล', 'warning');
-      return; }
-      // ✅ ส่วนที่แก้ไข: เพิ่มคอลัมน์ "ชื่อผู้ยืม"
+      if (borrowRecords.length === 0) { showToast('ไม่มีข้อมูล', 'warning'); return;
+      }
       const headers = ['รหัสสมาชิก', 'ชื่อผู้ยืม', 'รหัสหนังสือ', 'ชื่อหนังสือ', 'วันที่ยืม', 'กำหนดคืน', 'วันที่คืน', 'สถานะ'];
-      const csvContent = borrowRecords.map(record => {
-        let status = record.status === 'returned' ? 'คืนแล้ว' : (new Date(record.dueDate) < new Date() ? 'เกินกำหนด' : 'กำลังยืม');
-        
-        // ค้นหาชื่อสมาชิก
-        const member = members.find(m => m.id === record.memberId);
-        const memberName = member ? member.name : '-';
-
-        return [
-          record.memberId,
-          `"${memberName}"`, // ใส่ชื่อผู้ยืม
-          record.bookId, 
-          `"${record.bookTitle.replace(/"/g, '""')}"`, 
-          record.borrowDate, 
-          record.dueDate, 
-          record.returnDate || '', 
-          status
-        ].join(',');
+      const csv = borrowRecords.map(r => {
+        let st = r.status === 'returned' ? 'คืนแล้ว' : (new Date(r.dueDate) < new Date() ? 'เกินกำหนด' : 'กำลังยืม'); const m = members.find(i => i.id === r.memberId); const mn = m ? m.name : '-';
+        return [r.memberId, `"${mn}"`, r.bookId, `"${r.bookTitle.replace(/"/g, '""')}"`, r.borrowDate, r.dueDate, r.returnDate || '', st].join(',');
       }).join('\n');
-      
-      const blob = new Blob(["\ufeff", headers.join(',') + '\n' + csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob); link.download = `library_history_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(link);
-      link.click(); document.body.removeChild(link);
+      const blob = new Blob(["\ufeff", headers.join(',') + '\n' + csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = 
+      `library_history_${new Date().toISOString().split('T')[0]}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
     
     function initializeCharts() {
-      const options = { 
-          responsive: true, 
-          maintainAspectRatio: false, // ✅ Fix: ป้องกันกราฟไหล
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, 
-          plugins: { legend: { display: false } } 
-      };
+      const opts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { display: false } } };
       if (charts.borrow) charts.borrow.destroy();
-      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(102, 187, 106, 0.5)', borderColor: '#66bb6a', borderWidth: 2, tension: 0.4 }] }, options });
-      if (charts.popular) charts.popular.destroy();
-      charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: '#ffb74d' }] }, options: { ...options, indexAxis: 'y' } });
+      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(102, 187, 106, 0.5)', borderColor: '#66bb6a', borderWidth: 2, tension: 0.4 }] }, options: opts });
+      if (charts.popular) charts.popular.destroy(); charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: '#ffb74d' }] }, options: { ...opts, indexAxis: 'y' } });
     }
 
-    // ✅ FIX: ปรับปรุงฟังก์ชันกราฟ แก้ปัญหา Timezone และกราฟตก
     function updateCharts() {
       if (!charts.borrow || !charts.popular) return;
-      
-      const last7Days = [], borrowCounts = [];
-      
+      const last7 = [], counts = [];
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        
-        // --- ส่วนที่แก้ไข (FIX): ใช้วันที่ Local Time แทน toISOString() ---
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        const dateString = `${year}-${month}-${day}`; // จะได้ YYYY-MM-DD แบบตรงวันเป๊ะๆ
-        const labelDate = `${d.getDate()}/${d.getMonth() + 1}`; // รูปแบบป้ายชื่อกราฟ D/M
-        // -------------------------------------------------------------
-
-        last7Days.push(labelDate);
-        
-        // นับจำนวนรายการที่วันที่ยืม (borrowDate) ตรงกับ dateString
-        const count = borrowRecords.filter(b => b.borrowDate === dateString).length;
-        borrowCounts.push(count);
+        const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+        const ds = `${y}-${m}-${day}`; last7.push(`${d.getDate()}/${d.getMonth() + 1}`);
+        counts.push(borrowRecords.filter(b => b.borrowDate === ds).length);
       }
-      
-      charts.borrow.data.labels = last7Days;
-      charts.borrow.data.datasets[0].data = borrowCounts; 
-      charts.borrow.update();
-      
-      const bookCounts = {}; borrowRecords.forEach(b => bookCounts[b.bookTitle] = (bookCounts[b.bookTitle] || 0) + 1);
-      const top = Object.entries(bookCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
-      charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]);
-      charts.popular.update();
+      charts.borrow.data.labels = last7; charts.borrow.data.datasets[0].data = counts; charts.borrow.update();
+      const bc = {};
+      borrowRecords.forEach(b => bc[b.bookTitle] = (bc[b.bookTitle] || 0) + 1);
+      const top = Object.entries(bc).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]); charts.popular.update();
     }
 
-    function onConfigChange(config) {
-      document.getElementById('headerTitle').textContent = config.library_name || defaultConfig.library_name;
-      document.getElementById('headerSubtitle').textContent = config.admin_name || defaultConfig.admin_name;
-      document.querySelector('footer p.mb-1').textContent = config.contact_info || defaultConfig.contact_info;
-    }
-    
-    function initializeApp() {
-      if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
-      else onConfigChange(defaultConfig);
-      initializeCharts();
-      loadDataFromSheets();
-      updateAvailableBooksListPublic();
-    }
-
+    function onConfigChange(c) { document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
+    document.querySelector('footer p.mb-1').textContent = c.contact_info || defaultConfig.contact_info; }
+    function initializeApp() { if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
+    else onConfigChange(defaultConfig); initializeCharts(); loadDataFromSheets(); updateAvailableBooksListPublic(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeApp); else initializeApp();
   </script>
  </body>
