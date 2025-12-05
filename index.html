@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="th">
- <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</title>
@@ -9,567 +9,390 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+          colors: {
+            primary: '#10b981', // Emerald 500
+            secondary: '#34d399', // Emerald 400
+            dark: '#064e3b',
+            bg: '#f0fdf4'
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    /* =========================================
-       CORE & LAYOUT
-       ========================================= */
-    body {
-        box-sizing: border-box;
-        font-family: 'Sarabun', sans-serif;
-        background: linear-gradient(135deg, #e8f5e9 0%, #fff3e0 100%);
-        color: #333;
-        -webkit-tap-highlight-color: transparent;
-        overscroll-behavior-y: none;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box;
-    }
-    html, body { height: 100%; width: 100%;
-    }
-
-    .main-wrapper {
-        width: 100%; max-width: 1200px; margin: 0 auto;
-        padding: 15px; padding-bottom: 90px;
-    }
-
-    /* =========================================
-       HEADER
-       ========================================= */
-    .app-header {
-        background: linear-gradient(135deg, #66bb6a 0%, #ffb74d 100%);
-        padding: 20px; border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        text-align: center; margin-bottom: 20px; position: relative;
-    }
-    .app-header h1 { color: #1b5e20; font-size: 1.8em; font-weight: 700; margin-bottom: 5px; line-height: 1.3;
-    }
-    .app-header p { color: #2e7d32; font-size: 1em; opacity: 0.9;
-    }
-
-    .login-btn {
-        position: absolute; top: 15px; right: 15px;
-        background: rgba(255, 255, 255, 0.9); padding: 6px 12px;
-        border-radius: 20px; font-size: 0.8em; font-weight: bold;
-        color: #2e7d32; border: none; cursor: pointer;
-        z-index: 10;
-    }
-
-    .connection-status {
-        display: inline-block; padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.85em; font-weight: 600; margin-top: 10px;
-        background: rgba(255,255,255,0.8);
-    }
-    .status-connected { color: #2e7d32; background: #c8e6c9;
-    }
-    .status-disconnected { color: #c62828; background: #ffcdd2; }
-    .status-syncing { color: #f57f17; background: #fff9c4;
-    }
-
-    /* =========================================
-       NAVIGATION
-       ========================================= */
-    .nav-container { display: flex;
-        gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-    .nav-button {
-        flex: 1;
-        min-width: 120px; padding: 12px;
-        background: white; border: 1px solid #e0e0e0; border-radius: 12px;
-        font-size: 0.95em; font-weight: 600; color: #555;
-        cursor: pointer;
-        transition: all 0.2s; font-family: 'Sarabun';
-    }
-    .nav-button.active {
-        background: linear-gradient(135deg, #81c784 0%, #ffcc80 100%);
-        color: #1b5e20; border: none;
-    }
-    .admin-only { display: none !important;
-    }
-    .show-admin .admin-only { display: block !important; }
-    .show-admin .nav-button.admin-only { display: block !important;
-    }
-
-    /* =========================================
-       DASHBOARD & CARDS
-       ========================================= */
-    .content-section { display: none;
-        animation: fadeIn 0.3s ease; }
-    .content-section.active { display: block;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0);
-    } }
-
-    .dashboard-grid {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 15px; margin-bottom: 20px;
-    }
-    .dashboard-card {
-        background: white;
-        padding: 20px; border-radius: 16px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center;
-    }
-    .dashboard-card .stat-number { font-size: 2em;
-        font-weight: 700; color: #1b5e20; }
-    .card-container {
-        background: white;
-        padding: 20px; border-radius: 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;
-    }
-    .card-container h2 {
-        color: #1b5e20; margin-bottom: 15px; font-size: 1.3em;
-        border-bottom: 2px solid #e8f5e9; padding-bottom: 10px;
-    }
-
-    /* =========================================
-       FORMS & BUTTONS
-       ========================================= */
-    .form-layout {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px; margin-bottom: 20px;
-    }
-    .input-group { display: flex; flex-direction: column;
-    }
-    .input-group label { color: #2e7d32; font-weight: 600; margin-bottom: 6px; font-size: 0.95em;
-    }
-    .input-group input, .input-group select, .input-group textarea {
-        padding: 12px;
-        border: 2px solid #c8e6c9; border-radius: 10px;
-        font-size: 1em; font-family: 'Sarabun'; background: #fafafa; width: 100%;
-    }
-    .button-primary {
-        background: linear-gradient(135deg, #66bb6a 0%, #ffb74d 100%);
-        color: #1b5e20; padding: 12px 25px; border: none; border-radius: 10px;
-        font-weight: 600; cursor: pointer; font-size: 1em; width: 100%; font-family: 'Sarabun';
-    }
-    .button-secondary, .button-danger, .button-success {
-        padding: 8px 16px; border-radius: 8px;
-        border: none; font-weight: 600; cursor: pointer; font-family: 'Sarabun';
-    }
-    .button-secondary { background: #e8f5e9; color: #2e7d32;
-    }
-    .button-danger { background: #ffcdd2; color: #c62828; }
-    .button-success { background: #c8e6c9; color: #2e7d32;
-    }
-
-    /* =========================================
-       TABLES (Standard View)
-       ========================================= */
-    .data-table-wrapper {
-        background: white;
-        border-radius: 16px; padding: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow-x: auto;
-    }
-    .data-table { width: 100%;
-        border-collapse: collapse; min-width: 800px; }
-    .data-table th, .data-table td { padding: 12px; font-size: 0.95em; text-align: left;
-        border-bottom: 1px solid #eee; }
-    .data-table th { background-color: #f1f8e9; color: #33691e; white-space: nowrap;
-    }
-
-    /* =========================================
-       MOBILE CARD TABLE TRANSFORM (Magic CSS) 
-       เปลี่ยนตารางเป็นการ์ดเมื่ออยู่บนมือถือ
-       ========================================= */
-    @media (max-width: 768px) {
-        /* บังคับให้ตารางเลิกทำตัวเป็นตาราง */
-        .data-table, .data-table thead, .data-table tbody, .data-table th, .data-table td, .data-table tr {
-            display: block;
-        }
-
-        /* ซ่อนหัวตาราง (แต่ไม่ลบออก เพื่อ Accessibility) */
-        .data-table thead tr {
-            position: absolute;
-            top: -9999px; left: -9999px;
-        }
-
-        /* เปลี่ยนแถว (tr) ให้เป็นการ์ด */
-        .data-table tr {
-            border: 2px solid #e8f5e9;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            padding: 10px;
-        }
-
-        /* จัดการแต่ละเซลล์ (td) ให้แสดง Label คู่กับ Value */
-        .data-table td {
-            border: none;
-            border-bottom: 1px dashed #eee;
-            position: relative;
-            padding-left: 45% !important; /* เว้นที่ด้านซ้ายให้ Label */
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-            text-align: right !important; /* ข้อมูลชิดขวา */
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            word-break: break-word; /* ตัดคำถ้ายาวเกิน */
-        }
-
-        /* สร้าง Label จาก attribute 'data-label' */
-        .data-table td:before {
-            position: absolute;
-            top: 8px;
-            left: 10px;
-            width: 40%;
-            padding-right: 10px;
-            white-space: nowrap;
-            text-align: left;
-            font-weight: 700;
-            color: #2e7d32;
-            content: attr(data-label);
-            /* ดึงค่าจาก HTML มาแสดง */
-        }
-
-        /* ลบเส้นคั่นอันสุดท้าย */
-        .data-table td:last-child {
-            border-bottom: 0;
-            padding-left: 0 !important;
-            display: flex;
-            justify-content: center; /* ปุ่ม Action อยู่ตรงกลาง */
-            margin-top: 10px;
-            background: #f9fbe7;
-            border-radius: 8px;
-            padding: 10px !important;
-        }
-        
-        .data-table td:last-child:before { content: none;
-        } /* ซ่อน Label ตรงปุ่ม */
-
-        /* ปรับปุ่มในตารางให้สวยขึ้น */
-        .action-button-group { width: 100%;
-            justify-content: center; gap: 10px; }
-        
-        /* ปรับ Data Table Wrapper ให้ไม่ Scroll แล้ว เพราะแปลงเป็น Card */
-        .data-table-wrapper { overflow-x: visible;
-            padding: 0; background: transparent; box-shadow: none; }
-        .data-table { min-width: 100%;
-        }
-    }
-
-    /* =========================================
-       OTHER UTILS
-       ========================================= */
-    .book-card { background: white;
-        padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px; border: 1px solid #eee;
-    }
-    .book-card-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .book-card-title { font-size: 1.1em;
-        font-weight: 600; color: #1b5e20; }
-    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600;
-    }
-    .status-available { background: #c8e6c9; color: #2e7d32; }
-    .status-borrowed { background: #fff9c4; color: #f57f17;
-    }
-    .status-overdue { background: #ffcdd2; color: #c62828; }
-    .status-returned { background: #b3e5fc; color: #01579b;
-    }
-
-    .chart-wrapper {
-        background: white; padding: 20px; border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); margin-bottom: 30px;
-        height: 350px !important; position: relative !important;
-        overflow: hidden !important;
-        display: block;
-    }
-    .chart-wrapper canvas { width: 100% !important; height: 100% !important; max-height: 310px;
-    }
-
-    .search-filters { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;
-    }
-    .search-input { flex: 1; padding: 10px; border: 2px solid #c8e6c9; border-radius: 10px; font-family: 'Sarabun';
-    }
-
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex;
-        align-items: center; justify-content: center; z-index: 9998; padding: 20px; }
-    .modal-content { background: white; padding: 25px; border-radius: 15px;
-        max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    /* Custom Styles that Tailwind can't handle easily */
+    body { -webkit-tap-highlight-color: transparent; }
     
-    .loading-overlay { position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); z-index: 10000; display: flex; align-items: center; justify-content: center;
-    }
-    .loading-spinner { width: 50px; height: 50px; border: 5px solid #e8f5e9; border-top-color: #66bb6a; border-radius: 50%;
-        animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg);
-    } }
-    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 10px; color: white;
-        font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 9999; animation: slideIn 0.3s ease-out; background: #66bb6a;
-    }
-/* =========================================
-       MOBILE QUERY (รวมเมนูบน + แก้ล้นกรอบ 100%)
-       ========================================= */
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Transitions */
+    .content-section { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease-in-out; }
+    .content-section.active { display: block; opacity: 1; transform: translateY(0); }
+
+    /* Mobile Table Card View Magic */
     @media (max-width: 768px) {
-        /* --- 1. ปรับ Header และ Login --- */
-        .app-header {
-            padding: 15px; border-radius: 0 0 20px 20px;
-            margin: -15px -15px 15px -15px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .app-header h1 { font-size: 1.4em; }
-        .login-btn {
-            position: relative !important; top: auto !important; right: auto !important;
-            margin-bottom: 10px; display: inline-block; width: auto;
-        }
-
-        /* --- 2. ย้ายเมนูไปไว้ด้านบน (Grid 3 คอลัมน์) --- */
-        .nav-container {
-            position: static !important; width: 100%;
-            background: transparent; box-shadow: none; border-top: none;
-            padding: 0; margin-bottom: 20px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-        }
-        .nav-button {
-            padding: 10px 5px; border-radius: 12px;
-            background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .nav-icon { font-size: 1.5rem; margin-bottom: 4px; }
-        .nav-label { font-size: 0.75rem; font-weight: 600; }
-        .nav-button.admin-only { display: none !important; }
-        .show-admin .nav-button.admin-only { display: flex !important; }
-
-        /* --- 3. แก้ปัญหาฟอร์มล้นจอ (สำคัญ!) --- */
-        .main-wrapper { padding-bottom: 20px !important; overflow-x: hidden; }
-        
-        /* เปลี่ยน Grid เป็น Flex แนวตั้ง เพื่อไม่ให้ Input ดันออกข้าง */
-        .form-layout {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 15px !important;
-        }
-        
-        /* บังคับ Input Group ให้กว้างเต็ม แต่ไม่เกินจอ */
-        .input-group {
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* บังคับตัว Input/Date ให้หดอยู่ในกล่อง (Box Sizing) */
-        .input-group input, 
-        .input-group select, 
-        .input-group textarea {
-            width: 100% !important;
-            min-width: 0 !important;
-            max-width: 100% !important;
-            box-sizing: border-box !important; /* รวมขอบในความกว้าง */
-        }
-
-        /* ลด Padding การ์ดลงเพื่อให้มีที่เหลือ */
-        .card-container, .dashboard-card { padding: 15px !important; }
-        .chart-wrapper { height: 280px !important; }
+      .data-table thead { display: none; }
+      .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+      .data-table tr {
+        margin-bottom: 1rem;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+      }
+      .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #e2e8f0;
+        text-align: right;
+      }
+      .data-table td:last-child { border-bottom: none; justify-content: center; padding-top: 1rem; }
+      .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #059669;
+        text-align: left;
+        margin-right: 1rem;
+      }
+      .action-button-group { justify-content: center; }
     }
-        .dashboard-grid { grid-template-columns: 1fr 1fr;
-        }
-        .form-layout { grid-template-columns: 1fr;
-        }
-        .search-filters { flex-direction: column;
-        }
-        .chart-wrapper { height: 280px !important;
-        }
+
+    /* Desktop Table */
+    @media (min-width: 769px) {
+      .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+      .data-table th { background-color: #f0fdf4; color: #065f46; font-weight: 600; padding: 1rem; text-align: left; border-bottom: 2px solid #bbf7d0; }
+      .data-table td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #334155; }
+      .data-table tr:hover td { background-color: #f8fafc; }
+    }
+
+    /* Loading Spinner */
+    .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(4px); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+    .spinner { width: 48px; height: 48px; border: 5px solid #10b981; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; }
+    @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast { position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem; border-radius: 0.75rem; color: white; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 10000; animation: slideIn 0.3s ease-out; }
+    .toast-success { background: #10b981; }
+    .toast-error { background: #ef4444; }
+    .toast-warning { background: #f59e0b; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Admin Toggle */
+    .admin-only { display: none !important; }
+    .show-admin .admin-only { display: block !important; }
+    /* Mobile Nav Hide Admin */
+    @media (max-width: 768px) {
+        .show-admin .nav-item.admin-only { display: flex !important; }
     }
   </style>
-  <style>@view-transition { navigation: auto;
-  }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body>
-  <div class="main-wrapper" id="mainWrapper">
-   <header class="app-header">
-    <button id="adminLoginBtn" class="login-btn" onclick="showLoginModal()">🔒 เข้าสู่ระบบแอดมิน</button>
-    <button id="adminLogoutBtn" class="login-btn" onclick="logout()" style="display: none; background: #ffcdd2; color: #c62828;">🔓 ออกจากระบบ</button>
+</head>
+<body class="bg-slate-50 text-slate-700 min-h-screen pb-24 md:pb-0">
+
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="mainWrapper" class="max-w-7xl mx-auto md:p-6">
     
-    <h1 id="headerTitle">📚 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</h1>
-    <p id="headerSubtitle">ระบบจัดการยืม-คืนหนังสืออัตโนมัติ</p>
-    <div class="connection-status" id="connectionStatus"><span id="statusIcon">🔌</span> <span id="statusText">กำลังเชื่อมต่อ...</span></div>
-   </header>
-   
-   <nav class="nav-container">
-       <button class="nav-button active" onclick="navigateTo('dashboard')">
-           <div class="nav-icon">🏠</div>
-           <span class="nav-label">หน้าแรก</span>
-       </button>
-       
-       <button class="nav-button admin-only" onclick="navigateTo('borrow')">
-           <div class="nav-icon">📖</div>
-           <span class="nav-label">ยืม</span>
-       </button>
- 
-       <button class="nav-button admin-only" onclick="navigateTo('return')">
-           <div class="nav-icon">📥</div>
-           <span class="nav-label">คืน</span>
-       </button>
-       
-       <button class="nav-button admin-only" onclick="navigateTo('books')">
-           <div class="nav-icon">📚</div>
-           <span class="nav-label">หนังสือ</span>
-       </button>
-       
-       <button class="nav-button admin-only" onclick="navigateTo('members')">
-           <div class="nav-icon">👥</div>
-           <span class="nav-label">สมาชิก</span>
-       </button>
-       
-       <button class="nav-button admin-only" onclick="navigateTo('history')">
-           <div class="nav-icon">📋</div>
-           <span class="nav-label">ประวัติ</span>
-       </button>
-   </nav>
-
-   <div id="dashboard" class="content-section active">
-    <div class="dashboard-grid">
-     <div class="dashboard-card"><h3>หนังสือทั้งหมด</h3><div class="stat-number" id="totalBooks">0</div><div class="stat-label">เล่ม</div></div>
-     <div class="dashboard-card"><h3>หนังสือพร้อมให้ยืม</h3><div class="stat-number" id="availableBooks">0</div><div class="stat-label">เล่ม</div></div>
-     <div class="dashboard-card"><h3>กำลังถูกยืม</h3><div class="stat-number" id="borrowedBooks">0</div><div class="stat-label">เล่ม</div></div>
-     
-     <div class="dashboard-card admin-only"><h3>เกินกำหนดคืน</h3><div class="stat-number" id="overdueBooks">0</div><div class="stat-label">เล่ม</div></div>
-     <div class="dashboard-card admin-only"><h3>สมาชิกทั้งหมด</h3><div class="stat-number" id="totalMembers">0</div><div class="stat-label">คน</div></div>
-     <div class="dashboard-card admin-only"><h3>ยืมวันนี้</h3><div class="stat-number" id="todayBorrows">0</div><div class="stat-label">รายการ</div></div>
-    </div>
-    
-    <div class="card-container">
-     <h2>📚 รายการหนังสือในห้องสมุด</h2>
-     <div class="search-filters">
-        <input type="text" class="search-input" id="searchAvailableBooksPublic" placeholder="🔍 ค้นหาหนังสือ..." oninput="searchAvailableBooksPublic()"> 
-        <select class="search-input" id="filterCategoryPublic" onchange="searchAvailableBooksPublic()"> 
-            <option value="">ทุกหมวดหมู่</option> <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option 
-            value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option> 
-        </select>
-     </div>
-     <div id="availableBooksListPublic"></div>
-    </div>
-
-    <div class="chart-wrapper"><h2>📊 สถิติการยืมรายวัน (7 วันล่าสุด)</h2><canvas id="borrowChart"></canvas></div>
-    <div class="chart-wrapper"><h2>📚 หนังสือยอดนิยม</h2><canvas id="popularChart"></canvas></div>
-    <div class="card-container"><h2>⚠️ หนังสือเกินกำหนดคืน</h2><div id="overdueList"></div></div>
-   </div>
-
-   <div id="borrow" class="content-section">
-    <div class="card-container">
-     <h2>📖 ยืมหนังสือ (ผู้ดูแลระบบ)</h2>
-     <form id="borrowForm" onsubmit="handleBorrow(event)">
-      <div class="form-layout">
-       <div class="input-group" style="grid-column: 1 / -1;">
-           <label for="borrowMemberId">ค้นหาสมาชิก (พิมพ์ชื่อหรือรหัส) *</label> 
-           <input type="text" id="borrowMemberId" list="memberOptions" required placeholder="พิมพ์ชื่อหรือรหัสเพื่อค้นหา...">
-           <datalist id="memberOptions"></datalist>
-       </div>
-<div class="input-group" style="grid-column: 1 / -1;">
-           <label for="borrowDate">วันที่ยืม *</label> 
-           <input type="date" id="borrowDate" required>
-       </div>
-<div class="input-group" style="grid-column: 1 / -1;">
-           <label for="dueDate">กำหนดคืน (180 วัน) *</label> 
-           <input type="date" id="dueDate" required>
-       </div>
-       <div class="input-group" style="grid-column: 1 / -1; border-top: 1px dashed #c8e6c9; padding-top: 20px;">
-           <label style="color: #1b5e20; font-size: 1.1em;">➕ เพิ่มรายการหนังสือที่ต้องการยืม</label>
-           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-               <input type="text" id="borrowBookIdInput" placeholder="กรอกรหัสหนังสือ (เช่น B001)" style="flex:1; border: 2px solid #66bb6a;">
-               <button type="button" class="button-secondary" onclick="addToCart()">➕ เพิ่ม</button>
-           </div>
-       </div>
-
-       <div class="input-group" style="grid-column: 1 / -1;">
-           <label>รายการที่เลือกไว้ (Cart)</label>
-           <div class="data-table-wrapper" style="padding: 0; box-shadow: none; border: 1px solid #c8e6c9;">
-               <table class="data-table">
-                   <thead style="background: #f1f8e9;"><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th style="text-align: center;">จัดการ</th></tr></thead>
-                   <tbody id="borrowCartTableBody"><tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr></tbody>
-               </table>
-           </div>
-       </div>
-       <div class="input-group" style="grid-column: 1 / -1;"><label for="borrowNotes">หมายเหตุ</label> <textarea id="borrowNotes" placeholder="บันทึกเพิ่มเติม..."></textarea></div>
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 px-6 py-4 md:rounded-2xl md:shadow-lg border-b md:border-none border-slate-200 flex justify-between items-center transition-all duration-300">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-tr from-emerald-500 to-teal-400 rounded-xl flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-200">
+          <i class="ph ph-books"></i>
+        </div>
+        <div>
+          <h1 id="headerTitle" class="text-xl md:text-2xl font-bold text-slate-800 leading-tight">ระบบยืม-คืนหนังสือ</h1>
+          <p id="headerSubtitle" class="text-xs md:text-sm text-slate-500">ศกร.ระดับตำบลสันติสุข</p>
+        </div>
       </div>
-      <button type="submit" class="button-primary" id="borrowSubmitBtn" style="margin-top: 10px;"> 📖 ยืนยันการยืมหนังสือทั้งหมด </button>
-     </form>
-    </div>
-    <div class="card-container">
-     <h2>📚 หนังสือพร้อมให้ยืม</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchAvailableBooks" placeholder="🔍 ค้นหาหนังสือ..." oninput="searchAvailableBooks()"> </div>
-     <div id="availableBooksList"></div>
-    </div>
-   </div>
+      
+      <div class="flex items-center gap-3">
+        <div id="connectionStatus" class="hidden md:flex px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-500 items-center gap-1">
+          <span id="statusIcon">🔌</span> <span id="statusText">รอเชื่อมต่อ</span>
+        </div>
+        <button id="adminLoginBtn" onclick="showLoginModal()" class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-lg hover:bg-emerald-100 transition text-sm font-semibold">
+          <i class="ph ph-lock-key"></i> <span class="hidden sm:inline">ผู้ดูแลระบบ</span>
+        </button>
+        <button id="adminLogoutBtn" onclick="logout()" style="display: none;" class="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition text-sm font-semibold">
+          <i class="ph ph-sign-out"></i> <span class="hidden sm:inline">ออก</span>
+        </button>
+      </div>
+    </header>
 
-   <div id="return" class="content-section">
-    <div class="card-container">
-     <h2>📥 คืนหนังสือ</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchBorrowed" placeholder="🔍 ค้นหาชื่อผู้ยืม, รหัสสมาชิก หรือหนังสือ..." oninput="searchBorrowedBooks()"></div>
-     <div id="borrowedBooksList"></div>
-    </div>
-   </div>
+    <nav class="hidden md:flex gap-4 mt-6 mb-8 overflow-x-auto pb-2">
+      <button onclick="navigateTo('dashboard')" class="nav-button active px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="dashboard">
+        <i class="ph ph-house text-lg"></i> หน้าแรก
+      </button>
+      <button onclick="navigateTo('borrow')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="borrow">
+        <i class="ph ph-hand-holding"></i> ยืมหนังสือ
+      </button>
+      <button onclick="navigateTo('return')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="return">
+        <i class="ph ph-arrow-u-down-left"></i> คืนหนังสือ
+      </button>
+      <button onclick="navigateTo('books')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="books">
+        <i class="ph ph-book-bookmark"></i> จัดการหนังสือ
+      </button>
+      <button onclick="navigateTo('members')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="members">
+        <i class="ph ph-users"></i> สมาชิก
+      </button>
+      <button onclick="navigateTo('history')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="history">
+        <i class="ph ph-clock-counter-clockwise"></i> ประวัติ
+      </button>
+    </nav>
 
-   <div id="books" class="content-section">
-    <div class="card-container">
-     <h2>➕ เพิ่มหนังสือใหม่</h2>
-     <form id="bookForm" onsubmit="handleAddBook(event)">
-      <div class="form-layout">
-       <div class="input-group"><label 
-        for="bookId">รหัสหนังสือ *</label> <input type="text" id="bookId" required placeholder="B001"></div>
-       <div class="input-group"><label for="bookTitle">ชื่อหนังสือ *</label> <input type="text" id="bookTitle" required placeholder="ชื่อหนังสือ"></div>
-       <div class="input-group"><label for="bookAuthor">ผู้แต่ง *</label> <input type="text" id="bookAuthor" required placeholder="ชื่อผู้แต่ง"></div>
-       <div class="input-group"><label for="bookCategory">หมวดหมู่ *</label> <select id="bookCategory" required> <option value="">เลือกหมวดหมู่</option> <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option> </select></div>
-       <div class="input-group"><label for="bookISBN">ISBN</label> <input type="text" id="bookISBN" placeholder="978-xxx-xxx"></div>
-       <div class="input-group"><label for="bookQuantity">จำนวน *</label> <input type="number" id="bookQuantity" required min="1" value="1"></div>
- 
-      </div><button type="submit" class="button-primary"> ➕ เพิ่มหนังสือ </button>
-     </form>
-    </div>
-    <div class="data-table-wrapper">
-     <h2 style="margin-bottom: 20px;">📚 รายการหนังสือทั้งหมด</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchBooks" placeholder="🔍 ค้นหาหนังสือ..." oninput="searchBooks()"></div>
-     <table class="data-table">
-      <thead><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th>ผู้แต่ง</th><th>หมวดหมู่</th><th>ISBN</th><th>จำนวน</th><th>เหลือ</th><th>การจัดการ</th></tr></thead>
-      <tbody id="booksTableBody"></tbody>
-     </table>
-    </div>
-   </div>
+    <main class="p-4 md:p-0">
 
-   <div id="members" class="content-section">
-    <div class="card-container">
-     <h2>➕ เพิ่มสมาชิกใหม่</h2>
-     <form id="memberForm" onsubmit="handleAddMember(event)">
-  
-      <div class="form-layout">
-       <div class="input-group"><label for="memberId">รหัสสมาชิก *</label> <input type="text" id="memberId" required placeholder="M001"></div>
-       <div class="input-group"><label for="memberName">ชื่อ-สกุล *</label> <input type="text" id="memberName" required placeholder="นายสมชาย ใจดี"></div>
-       <div class="input-group"><label for="memberEmail">อีเมล</label> <input type="email" id="memberEmail" placeholder="example@mail.com"></div>
-       <div class="input-group"><label for="memberPhone">เบอร์โทร *</label> <input type="tel" id="memberPhone" required placeholder="08x-xxx-xxxx"></div>
-       <div class="input-group"><label for="memberType">ประเภท *</label> <select id="memberType" required> <option value="">เลือกประเภท</option> <option value="ประถมศึกษา">นักศึกษา ระดับประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">นักศึกษา ระดับมัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">นักศึกษา ระดับมัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">บุคคลทั่วไป</option> </select></div>
-     
-      </div><button type="submit" class="button-primary"> ➕ เพิ่มสมาชิก </button>
-     </form>
-    </div>
-    <div class="data-table-wrapper">
-     <h2 style="margin-bottom: 20px;">👥 รายการสมาชิกทั้งหมด</h2>
-     <div class="search-filters">
-        <input type="text" class="search-input" id="searchMembers" placeholder="🔍 ค้นหาสมาชิก..." oninput="searchMembers()"> 
-        <select class="search-input" id="filterMemberType" onchange="searchMembers()"> <option value="">ทุกประเภท</option> <option value="ประถมศึกษา">ประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">มัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">มัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">ทั่วไป</option> </select>
+      <section id="dashboard" class="content-section active space-y-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+            <span class="text-sm text-slate-400">หนังสือทั้งหมด</span>
+            <span id="totalBooks" class="text-3xl font-bold text-slate-700 my-1">0</span>
+            <span class="text-xs px-2 py-0.5 bg-slate-100 rounded text-slate-500">เล่ม</span>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100 flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-2 opacity-10"><i class="ph ph-check-circle text-6xl text-emerald-500"></i></div>
+            <span class="text-sm text-emerald-600 font-medium">ว่างพร้อมยืม</span>
+            <span id="availableBooks" class="text-3xl font-bold text-emerald-600 my-1">0</span>
+            <span class="text-xs px-2 py-0.5 bg-emerald-100 rounded text-emerald-600">เล่ม</span>
+          </div>
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-orange-100 flex flex-col items-center justify-center">
+            <span class="text-sm text-orange-500 font-medium">กำลังถูกยืม</span>
+            <span id="borrowedBooks" class="text-3xl font-bold text-orange-500 my-1">0</span>
+            <span class="text-xs px-2 py-0.5 bg-orange-100 rounded text-orange-600">เล่ม</span>
+          </div>
+          
+          <div class="admin-only bg-white p-4 rounded-2xl shadow-sm border border-red-100 flex flex-col items-center justify-center">
+             <span class="text-sm text-red-500 font-medium">เกินกำหนด</span>
+             <span id="overdueBooks" class="text-3xl font-bold text-red-500 my-1">0</span>
+             <span class="text-xs px-2 py-0.5 bg-red-100 rounded text-red-600">เล่ม</span>
+          </div>
+          <div class="admin-only bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center justify-center">
+             <span class="text-sm text-slate-400">สมาชิก</span>
+             <span id="totalMembers" class="text-3xl font-bold text-slate-700 my-1">0</span>
+             <span class="text-xs px-2 py-0.5 bg-slate-100 rounded text-slate-500">คน</span>
+          </div>
+          <div class="admin-only bg-white p-4 rounded-2xl shadow-sm border border-blue-100 flex flex-col items-center justify-center">
+             <span class="text-sm text-blue-500 font-medium">ยืมวันนี้</span>
+             <span id="todayBorrows" class="text-3xl font-bold text-blue-500 my-1">0</span>
+             <span class="text-xs px-2 py-0.5 bg-blue-100 rounded text-blue-600">รายการ</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg shadow-slate-200/50">
+          <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph ph-magnifying-glass text-emerald-500"></i> ค้นหาหนังสือ</h2>
+          <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <input type="text" id="searchAvailableBooksPublic" class="flex-1 p-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition" placeholder="พิมพ์ชื่อหนังสือ, ผู้แต่ง...">
+            <select id="filterCategoryPublic" class="p-3 border border-slate-200 rounded-xl bg-slate-50 outline-none cursor-pointer" onchange="searchAvailableBooksPublic()">
+              <option value="">ทุกหมวดหมู่</option>
+              <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option>
+            </select>
+          </div>
+          <div id="availableBooksListPublic" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+             <h3 class="text-lg font-bold text-slate-800 mb-4">📊 สถิติการยืม (7 วันล่าสุด)</h3>
+             <div class="h-64"><canvas id="borrowChart"></canvas></div>
+          </div>
+          <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+             <h3 class="text-lg font-bold text-slate-800 mb-4">🏆 หนังสือยอดนิยม</h3>
+             <div class="h-64"><canvas id="popularChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-400">
+          <h2 class="text-lg font-bold text-red-500 mb-4 flex items-center gap-2"><i class="ph ph-warning-circle"></i> รายการหนังสือเกินกำหนดคืน</h2>
+          <div id="overdueList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </section>
+
+      <section id="borrow" class="content-section space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-lg shadow-emerald-100/50">
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph ph-hand-holding text-xl"></i></div>
+             <div>
+               <h2 class="text-xl font-bold text-slate-800">ทำรายการยืมหนังสือ</h2>
+               <p class="text-sm text-slate-500">บันทึกข้อมูลการยืมเข้าระบบ</p>
+             </div>
+          </div>
+
+          <form id="borrowForm" onsubmit="handleBorrow(event)" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div class="md:col-span-3 space-y-2">
+                 <label class="text-sm font-semibold text-slate-600">ค้นหาสมาชิก *</label>
+                 <input type="text" id="borrowMemberId" list="memberOptions" required class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="พิมพ์ชื่อ หรือ รหัสสมาชิก...">
+                 <datalist id="memberOptions"></datalist>
+               </div>
+               <div class="space-y-2">
+                 <label class="text-sm font-semibold text-slate-600">วันที่ยืม</label>
+                 <input type="date" id="borrowDate" required class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50">
+               </div>
+               <div class="space-y-2">
+                 <label class="text-sm font-semibold text-slate-600">กำหนดคืน (180 วัน)</label>
+                 <input type="date" id="dueDate" required class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50">
+               </div>
+            </div>
+
+            <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-4">
+               <label class="text-sm font-bold text-emerald-700 flex items-center gap-2"><i class="ph ph-plus-circle"></i> เพิ่มหนังสือที่จะยืม</label>
+               <div class="flex gap-2">
+                  <input type="text" id="borrowBookIdInput" class="flex-1 p-3 border border-emerald-200 rounded-xl focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="รหัสหนังสือ (เช่น B001)">
+                  <button type="button" onclick="addToCart()" class="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 shadow-lg shadow-emerald-200">เพิ่ม</button>
+               </div>
+            </div>
+
+            <div class="overflow-hidden rounded-xl border border-slate-200">
+              <table class="data-table">
+                <thead><tr class="bg-slate-50"><th>รหัส</th><th>ชื่อหนังสือ</th><th class="text-center">จัดการ</th></tr></thead>
+                <tbody id="borrowCartTableBody"><tr><td colspan="3" class="text-center py-8 text-slate-400">ยังไม่มีรายการ</td></tr></tbody>
+              </table>
+            </div>
+
+            <div class="space-y-2">
+               <label class="text-sm font-semibold text-slate-600">หมายเหตุ</label>
+               <textarea id="borrowNotes" class="w-full p-3 border border-slate-200 rounded-xl bg-slate-50" placeholder="บันทึกเพิ่มเติม..."></textarea>
+            </div>
+
+            <button type="submit" id="borrowSubmitBtn" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-emerald-200 hover:scale-[1.02] transition-transform">📖 ยืนยันการยืมหนังสือ</button>
+          </form>
+        </div>
+        
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+           <h3 class="font-bold text-slate-700 mb-4">หนังสือพร้อมให้ยืม</h3>
+           <input type="text" id="searchAvailableBooks" oninput="searchAvailableBooks()" class="w-full p-2 border rounded-lg mb-4 text-sm" placeholder="🔍 ค้นหารหัสหนังสือ...">
+           <div id="availableBooksList" class="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto"></div>
+        </div>
+      </section>
+
+      <section id="return" class="content-section space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-lg">
+           <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="ph ph-arrow-u-down-left text-emerald-500"></i> คืนหนังสือ</h2>
+           <input type="text" id="searchBorrowed" class="w-full p-4 border border-slate-200 rounded-xl bg-slate-50 text-lg mb-6 focus:ring-2 focus:ring-emerald-200 outline-none" placeholder="🔍 พิมพ์ชื่อผู้ยืม, รหัสสมาชิก หรือชื่อหนังสือ..." oninput="searchBorrowedBooks()">
+           <div id="borrowedBooksList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+      </section>
+
+      <section id="books" class="content-section space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-emerald-500">
+          <h2 class="text-lg font-bold text-slate-800 mb-4">➕ เพิ่มหนังสือใหม่</h2>
+          <form id="bookForm" onsubmit="handleAddBook(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1"><label class="text-sm font-semibold">รหัสหนังสือ *</label><input type="text" id="bookId" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">ชื่อหนังสือ *</label><input type="text" id="bookTitle" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">ผู้แต่ง *</label><input type="text" id="bookAuthor" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">หมวดหมู่ *</label>
+              <select id="bookCategory" required class="w-full p-2.5 border rounded-lg bg-slate-50">
+                 <option value="">เลือกหมวดหมู่</option> <option value="นิยาย">นิยาย</option> <option value="การ์ตูน">การ์ตูน</option> <option value="ความรู้ทั่วไป">ความรู้ทั่วไป</option> <option value="สาระทักษะการเรียนรู้">สาระทักษะการเรียนรู้</option> <option value="สาระความรู้พื้นฐาน">สาระความรู้พื้นฐาน</option> <option value="สาระการประกอบอาชีพ">สาระการประกอบอาชีพ</option> <option value="สาระทักษะการดำเนินชีวิต">สาระทักษะการดำเนินชีวิต</option> <option value="สาระการพัฒนาสังคม">สาระการพัฒนาสังคม</option> <option value="อื่นๆ">อื่นๆ</option>
+              </select>
+            </div>
+            <div class="space-y-1"><label class="text-sm font-semibold">ISBN</label><input type="text" id="bookISBN" class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">จำนวน *</label><input type="number" id="bookQuantity" required min="1" value="1" class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <button type="submit" class="md:col-span-2 py-3 bg-emerald-600 text-white rounded-lg font-bold hover:bg-emerald-700 transition">บันทึกข้อมูลหนังสือ</button>
+          </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+             <h2 class="text-lg font-bold">📚 รายการหนังสือทั้งหมด</h2>
+             <input type="text" id="searchBooks" class="w-full md:w-64 p-2 border rounded-lg text-sm" placeholder="🔍 ค้นหา..." oninput="searchBooks()">
+          </div>
+          <div class="overflow-x-auto">
+            <table class="data-table">
+              <thead><tr><th>รหัส</th><th>ชื่อหนังสือ</th><th>ผู้แต่ง</th><th>หมวดหมู่</th><th>ISBN</th><th>จำนวน</th><th>เหลือ</th><th>จัดการ</th></tr></thead>
+              <tbody id="booksTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="members" class="content-section space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-blue-500">
+          <h2 class="text-lg font-bold text-slate-800 mb-4">➕ เพิ่มสมาชิกใหม่</h2>
+          <form id="memberForm" onsubmit="handleAddMember(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-1"><label class="text-sm font-semibold">รหัสสมาชิก *</label><input type="text" id="memberId" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">ชื่อ-สกุล *</label><input type="text" id="memberName" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">อีเมล</label><input type="email" id="memberEmail" class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1"><label class="text-sm font-semibold">เบอร์โทร *</label><input type="tel" id="memberPhone" required class="w-full p-2.5 border rounded-lg bg-slate-50"></div>
+            <div class="space-y-1 md:col-span-2"><label class="text-sm font-semibold">ประเภท *</label>
+              <select id="memberType" required class="w-full p-2.5 border rounded-lg bg-slate-50">
+                <option value="">เลือกประเภท</option> <option value="ประถมศึกษา">นักศึกษา ระดับประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">นักศึกษา ระดับมัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">นักศึกษา ระดับมัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">บุคคลทั่วไป</option>
+              </select>
+            </div>
+            <button type="submit" class="md:col-span-2 py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition">บันทึกสมาชิก</button>
+          </form>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+           <div class="flex flex-col md:flex-row gap-4 mb-4">
+              <input type="text" id="searchMembers" class="flex-1 p-2 border rounded-lg text-sm" placeholder="🔍 ค้นหาชื่อ/รหัส..." oninput="searchMembers()">
+              <select id="filterMemberType" class="p-2 border rounded-lg text-sm" onchange="searchMembers()"> <option value="">ทุกประเภท</option> <option value="ประถมศึกษา">ประถมศึกษา</option> <option value="มัธยมศึกษาตอนต้น">มัธยมศึกษาตอนต้น</option> <option value="มัธยมศึกษาตอนปลาย">มัธยมศึกษาตอนปลาย</option> <option value="ครู">ครู</option> <option value="บุคลากร">บุคลากร</option> <option value="ทั่วไป">ทั่วไป</option> </select>
+           </div>
+           <div class="overflow-x-auto">
+             <table class="data-table">
+               <thead><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>อีเมล</th><th>เบอร์โทร</th><th>ประเภท</th><th>จัดการ</th></tr></thead>
+               <tbody id="membersTableBody"></tbody>
+             </table>
+           </div>
+        </div>
+      </section>
+
+      <section id="history" class="content-section space-y-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+          <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+             <h2 class="text-xl font-bold">📋 ประวัติการยืม-คืน</h2>
+             <button onclick="exportHistory()" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-black flex items-center gap-2"><i class="ph ph-download-simple"></i> Export CSV</button>
+          </div>
+          <div class="flex flex-wrap gap-4 mb-4">
+             <input type="text" id="searchHistory" class="flex-1 min-w-[200px] p-2 border rounded-lg" placeholder="🔍 ค้นหา..." oninput="searchHistory()">
+             <select id="filterStatus" class="p-2 border rounded-lg" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select>
+          </div>
+          <div class="overflow-x-auto">
+             <table class="data-table">
+               <thead><tr><th>รหัสสมาชิก</th><th>ชื่อผู้ยืม</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+               <tbody id="historyTableBody"></tbody>
+             </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+    
+    <footer class="mt-12 text-center text-slate-400 text-sm pb-8">
+       <p class="mb-1">© 2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</p>
+    </footer>
+
+  </div>
+
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-50 px-6 py-2 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+     <button onclick="navigateTo('dashboard')" class="nav-button active flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="dashboard">
+       <i class="ph ph-house text-2xl"></i> <span class="text-[10px] font-medium">หน้าแรก</span>
+     </button>
+     <button onclick="navigateTo('borrow')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="borrow">
+       <i class="ph ph-hand-holding text-2xl"></i> <span class="text-[10px] font-medium">ยืม</span>
+     </button>
+     <div class="w-12 h-12 -mt-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200 border-4 border-slate-50 admin-only" onclick="navigateTo('return')">
+        <i class="ph ph-scan text-2xl"></i>
      </div>
-     <table class="data-table">
-      <thead><tr><th>รหัส</th><th>ชื่อ-สกุล</th><th>อีเมล</th><th>เบอร์โทร</th><th>ประเภท</th><th>การจัดการ</th></tr></thead>
-      <tbody id="membersTableBody"></tbody>
- 
-     </table>
-    </div>
-   </div>
-
-   <div id="history" class="content-section">
-    <div class="data-table-wrapper">
-     <h2 style="margin-bottom: 20px;">📋 ประวัติการยืม-คืน</h2>
-     <div class="search-filters"><input type="text" class="search-input" id="searchHistory" placeholder="🔍 ค้นหาด้วยชื่อ หรือรหัส..." oninput="searchHistory()"> <select class="search-input" id="filterStatus" onchange="searchHistory()"> <option value="">ทุกสถานะ</option> <option value="borrowed">กำลังยืม</option> <option value="returned">คืนแล้ว</option> <option value="overdue">เกินกำหนด</option> </select> <button class="button-secondary" onclick="exportHistory()">📥 Export CSV</button></div>
-     <table class="data-table">
-      <thead><tr><th>รหัสสมาชิก</th><th>ชื่อผู้ยืม</th><th>รหัสหนังสือ</th><th>ชื่อหนังสือ</th><th>วันที่ยืม</th><th>กำหนดคืน</th><th>วันที่คืน</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
-      <tbody id="historyTableBody"></tbody>
-     </table>
-    </div>
-   </div>
-   
-   <footer class="bg-white mt-10 
-    border-t"><div class="container mx-auto py-6 text-center text-gray-500 text-sm"><p class="mb-1">© 2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข</p></div></footer>
+     <button onclick="navigateTo('books')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="books">
+       <i class="ph ph-books text-2xl"></i> <span class="text-[10px] font-medium">หนังสือ</span>
+     </button>
+     <button onclick="navigateTo('members')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="members">
+       <i class="ph ph-users text-2xl"></i> <span class="text-[10px] font-medium">สมาชิก</span>
+     </button>
   </div>
 
   <script>
@@ -585,36 +408,50 @@
       admin_name: "ระบบจัดการยืม-คืนหนังสืออัตโนมัติ",
       contact_info: "@2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
     };
+
+    // UI Helper: Active Class Toggle
+    function updateNavUI(targetId) {
+        document.querySelectorAll('.nav-button').forEach(b => {
+            b.classList.remove('text-emerald-600', 'bg-emerald-50', 'active', 'border-emerald-200');
+            b.classList.add('text-slate-600', 'bg-white', 'border-transparent');
+            
+            // Check data-target
+            if(b.dataset.target === targetId) {
+                b.classList.add('text-emerald-600', 'bg-emerald-50', 'active', 'border-emerald-200');
+                b.classList.remove('text-slate-600', 'bg-white', 'border-transparent');
+                // For mobile text color
+                if(b.querySelector('span')) b.querySelector('span').classList.remove('text-slate-400');
+            }
+        });
+    }
+
     function showLoginModal() {
-        const overlay = document.createElement('div'); overlay.className = 'modal-overlay'; overlay.id = 'loginOverlay';
-        overlay.innerHTML = `<div class="modal-content login-container" style="text-align: center;"><div class="modal-header">🔑 เข้าสู่ระบบแอดมิน</div><p>กรุณากรอกรหัสผ่านเพื่อจัดการระบบ</p><form onsubmit="handleLogin(event)"><input type="password" id="adminPassword" class="search-input" style="width:100%; text-align:center; margin: 15px 0;"
-        placeholder="รหัสผ่าน" required><div class="modal-buttons" style="justify-content: center; margin-top: 20px;"><button type="button" class="button-secondary" onclick="document.getElementById('loginOverlay').remove()">ยกเลิก</button><button type="submit" class="button-primary">เข้าสู่ระบบ</button></div></form></div>`;
+        const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.id = 'loginOverlay';
+        overlay.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative animate-[slideIn_0.2s_ease-out]"><div class="text-4xl mb-4">🔐</div><h3 class="text-xl font-bold mb-2">เข้าสู่ระบบแอดมิน</h3><p class="text-slate-500 text-sm mb-6">กรุณากรอกรหัสผ่านเพื่อจัดการระบบ</p><form onsubmit="handleLogin(event)"><input type="password" id="adminPassword" class="w-full p-3 border border-slate-200 rounded-xl text-center text-lg tracking-widest mb-4 focus:border-emerald-500 outline-none" placeholder="••••••" required><div class="flex gap-2"><button type="button" class="flex-1 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200" onclick="document.getElementById('loginOverlay').remove()">ยกเลิก</button><button type="submit" class="flex-1 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 shadow-lg shadow-emerald-200">เข้าสู่ระบบ</button></div></form></div>`;
         document.body.appendChild(overlay); setTimeout(() => document.getElementById('adminPassword').focus(), 100);
     }
     function handleLogin(e) {
         e.preventDefault(); const pwd = document.getElementById('adminPassword').value;
-        if (pwd === ADMIN_PASSWORD) { isAdmin = true; document.getElementById('mainWrapper').classList.add('show-admin'); document.getElementById('adminLoginBtn').style.display = 'none'; document.getElementById('adminLogoutBtn').style.display = 'block'; document.getElementById('loginOverlay').remove(); showToast('เข้าสู่ระบบสำเร็จ', 'success'); updateAllViews();
+        if (pwd === ADMIN_PASSWORD) { isAdmin = true; document.getElementById('mainWrapper').classList.add('show-admin'); 
+        document.querySelector('.fixed.bottom-0').classList.add('show-admin'); // Mobile Nav
+        document.getElementById('adminLoginBtn').style.display = 'none'; document.getElementById('adminLogoutBtn').style.display = 'flex'; document.getElementById('loginOverlay').remove(); showToast('เข้าสู่ระบบสำเร็จ', 'success'); updateAllViews();
         } else { showToast('รหัสผ่านไม่ถูกต้อง', 'error'); }
     }
     function logout() { isAdmin = false; document.getElementById('mainWrapper').classList.remove('show-admin');
-    document.getElementById('adminLoginBtn').style.display = 'block'; document.getElementById('adminLogoutBtn').style.display = 'none'; navigateTo('dashboard'); showToast('ออกจากระบบแล้ว', 'success'); }
+    document.querySelector('.fixed.bottom-0').classList.remove('show-admin'); // Mobile Nav
+    document.getElementById('adminLoginBtn').style.display = 'flex'; document.getElementById('adminLogoutBtn').style.display = 'none'; navigateTo('dashboard'); showToast('ออกจากระบบแล้ว', 'success'); }
 
     function updateConnectionStatus(status) {
       const statusEl = document.getElementById('connectionStatus'), iconEl = document.getElementById('statusIcon'), textEl = document.getElementById('statusText');
-      statusEl.className = 'connection-status';
-      if (status === 'connected') { statusEl.classList.add('status-connected'); iconEl.textContent = '✅'; textEl.textContent = 'เชื่อมต่อแล้ว'; isConnected = true;
-      }
-      else if (status === 'syncing') { statusEl.classList.add('status-syncing'); iconEl.textContent = '🔄'; textEl.textContent = 'กำลังซิงค์ข้อมูล...';
-      }
-      else { statusEl.classList.add('status-disconnected'); iconEl.textContent = '❌'; textEl.textContent = 'ไม่สามารถเชื่อมต่อได้'; isConnected = false;
-      }
+      statusEl.className = 'hidden md:flex px-3 py-1 rounded-full text-xs font-semibold items-center gap-1 transition-colors duration-300';
+      
+      if (status === 'connected') { statusEl.classList.add('bg-emerald-100', 'text-emerald-700'); iconEl.textContent = '✅'; textEl.textContent = 'ออนไลน์'; isConnected = true; }
+      else if (status === 'syncing') { statusEl.classList.add('bg-amber-100', 'text-amber-700'); iconEl.textContent = '🔄'; textEl.textContent = 'กำลังซิงค์...'; }
+      else { statusEl.classList.add('bg-red-100', 'text-red-700'); iconEl.textContent = '❌'; textEl.textContent = 'ออฟไลน์'; isConnected = false; }
     }
     
-    function showLoading() { const overlay = document.createElement('div');
-        overlay.className = 'loading-overlay'; overlay.id = 'loadingOverlay'; overlay.innerHTML = '<div class="loading-spinner"></div>'; document.body.appendChild(overlay);
-    }
-    function hideLoading() { const overlay = document.getElementById('loadingOverlay'); if (overlay) overlay.remove();
-    }
+    function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
     
     function scriptRequest(params) {
       return new Promise((resolve, reject) => {
@@ -632,63 +469,57 @@
     }
 
     async function saveToSheets(sheet, data) { try { updateConnectionStatus('syncing');
-      const r = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) }); if (r && r.success) { updateConnectionStatus('connected'); return true;
-      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('บันทึกไม่สำเร็จ', 'error'); return false;
-      } }
+    const r = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) }); if (r && r.success) { updateConnectionStatus('connected'); return true;
+    } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('บันทึกไม่สำเร็จ', 'error'); return false;
+    } }
     async function deleteFromSheets(sheet, id) { try { updateConnectionStatus('syncing');
-      const r = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id }); if (r && r.success) { updateConnectionStatus('connected'); return true;
-      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('ลบไม่สำเร็จ', 'error'); return false;
-      } }
+    const r = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id }); if (r && r.success) { updateConnectionStatus('connected'); return true;
+    } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('ลบไม่สำเร็จ', 'error'); return false;
+    } }
 
     function showToast(message, type = 'success') { const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
-      toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
-    function showConfirmModal(title, message, onConfirm) { const overlay = document.createElement('div');
-      overlay.className = 'modal-overlay'; overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><div class="modal-body">${message}</div><div class="modal-buttons"><button class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button class="button-danger" id="confirmBtn">ยืนยัน</button></div></div>`; document.body.appendChild(overlay);
-      document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); }; overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+    toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+    
+    function showConfirmModal(title, message, onConfirm) { 
+        const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; 
+        overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full relative"><h3 class="text-lg font-bold mb-2 text-slate-800">${title}</h3><p class="text-slate-600 mb-6">${message}</p><div class="flex gap-3 justify-end"><button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600" id="confirmBtn">ยืนยัน</button></div></div>`; 
+        document.body.appendChild(overlay);
+        document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); }; 
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
-    function findItem(array, id) { return array.find(item => item.id === id);
-    }
+    
+    function findItem(array, id) { return array.find(item => item.id === id); }
 
     function showEditModal(title, formHtml, onSave) {
-      const existing = document.getElementById('genericModalOverlay');
-      if (existing) existing.remove();
-      const overlay = document.createElement('div'); overlay.className = 'modal-overlay'; overlay.id = 'genericModalOverlay';
-      overlay.innerHTML = `<div class="modal-content"><div class="modal-header">${title}</div><form id="editForm"><div class="modal-body" style="margin-bottom: 0;">${formHtml}</div><div class="modal-buttons" style="margin-top: 20px;"><button type="button" class="button-secondary" onclick="this.closest('.modal-overlay').remove()">ยกเลิก</button><button type="submit" class="button-primary" id="saveEditBtn">บันทึก</button></div></form></div>`;
+      const existing = document.getElementById('genericModalOverlay'); if (existing) existing.remove();
+      const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.id = 'genericModalOverlay';
+      overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-slate-800">${title}</h3><button onclick="this.closest('.loading-overlay').remove()" class="text-slate-400 hover:text-slate-600">✕</button></div><form id="editForm" class="space-y-4"><div class="space-y-4">${formHtml}</div><div class="flex gap-3 pt-4 mt-4 border-t"><button type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-medium" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600" id="saveEditBtn">บันทึก</button></div></form></div>`;
       document.body.appendChild(overlay);
-      document.getElementById('editForm').onsubmit = async (e) => { e.preventDefault(); const btn = document.getElementById('saveEditBtn'); btn.disabled = true; btn.textContent = 'บันทึก...'; await onSave(); overlay.remove();
-      };
+      document.getElementById('editForm').onsubmit = async (e) => { e.preventDefault(); const btn = document.getElementById('saveEditBtn'); btn.disabled = true; btn.textContent = 'บันทึก...'; await onSave(); overlay.remove(); };
       overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
     }
 
     function navigateTo(sectionId) {
       document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active')); document.getElementById(sectionId).classList.add('active');
-      document.querySelectorAll('.nav-button').forEach(b => b.classList.remove('active'));
-      const target = event.target.closest('.nav-button'); if (target) target.classList.add('active');
+      updateNavUI(sectionId);
+      
       if (sectionId === 'books') updateBooksTable(); if (sectionId === 'members') updateMembersTable();
       if (sectionId === 'history') updateHistoryTable();
       if (sectionId === 'borrow') { updateAvailableBooksList(); const t = new Date();
       const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0];
       }
       if (sectionId === 'return') updateBorrowedBooksList(); if (sectionId === 'dashboard') updateAvailableBooksListPublic();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function updateMemberOptions() { const dl = document.getElementById('memberOptions'); if(dl) dl.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join('');
-    }
+    function updateMemberOptions() { const dl = document.getElementById('memberOptions'); if(dl) dl.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join(''); }
 
-    // แก้ไข: ย้าย updateCharts ออกจาก if(isAdmin) เพื่อให้แสดงกราฟได้เลย
     function updateAllViews() {
-      updateDashboardStats(); 
+      updateDashboardStats();
       updateAvailableBooksListPublic(); 
       updateMemberOptions();
-      
-      // แสดงกราฟและสถิติต่างๆ ทันที
       updateCharts();
-
       if (isAdmin) { 
-          updateBooksTable();
-          updateMembersTable(); 
-          updateHistoryTable(); 
-          updateAvailableBooksList(); 
-          updateBorrowedBooksList(); 
+          updateBooksTable(); updateMembersTable(); updateHistoryTable(); updateAvailableBooksList(); updateBorrowedBooksList();
       }
     }
 
@@ -704,75 +535,63 @@
       document.getElementById('overdueBooks').textContent = overdue.length; document.getElementById('totalMembers').textContent = members.length; document.getElementById('todayBorrows').textContent = todayBorrows;
       
       const overdueList = document.getElementById('overdueList');
-      if (overdue.length === 0) { overdueList.innerHTML = '<p style="color: #66bb6a; text-align: center; padding: 20px;">🎉 ไม่มีหนังสือเกินกำหนดคืน</p>';
+      if (overdue.length === 0) { overdueList.innerHTML = '<div class="col-span-full text-center py-6 text-emerald-500 bg-emerald-50 rounded-xl">🎉 เยี่ยมมาก! ไม่มีหนังสือเกินกำหนดคืน</div>';
       } else {
         overdueList.innerHTML = overdue.map(item => {
           const book = books.find(b => b.id === item.bookId); const member = members.find(m => m.id === item.memberId);
           const daysOverdue = Math.floor((new Date() - new Date(item.dueDate)) / (1000 * 60 * 60 * 24));
-          return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${book ? book.title : item.bookId}</div><div class="book-card-author">สมาชิก: ${member ? member.name : item.memberId}</div></div><span class="status-badge status-overdue">เกิน ${daysOverdue} วัน</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${item.bookId}</div><div class="book-card-info-item"><span class="book-card-info-label">กำหนด:</span> ${item.dueDate}</div></div></div>`;
- 
+          return `<div class="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center"><div class="overflow-hidden"><div class="font-bold text-slate-800 truncate">${book ? book.title : item.bookId}</div><div class="text-sm text-slate-500">${member ? member.name : item.memberId}</div><div class="text-xs text-red-400 mt-1">กำหนด: ${item.dueDate}</div></div><span class="px-3 py-1 bg-white text-red-500 text-xs font-bold rounded-full shadow-sm whitespace-nowrap">เกิน ${daysOverdue} วัน</span></div>`;
         }).join('');
       }
     }
     
     function updateAvailableBooksListPublic() {
-        const term = document.getElementById('searchAvailableBooksPublic')?.value.toLowerCase() ||
-        '';
+        const term = document.getElementById('searchAvailableBooksPublic')?.value.toLowerCase() || '';
         const cat = document.getElementById('filterCategoryPublic')?.value || '';
         let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)) && (!cat || b.category === cat));
         const container = document.getElementById('availableBooksListPublic');
-        if (list.length === 0) { container.innerHTML = '<div class="empty-message"><div class="empty-icon">📖</div><h3>ไม่พบหนังสือ</h3></div>'; return;
-        }
-        container.innerHTML = list.map(b => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.title}</div><div class="book-card-author">ผู้แต่ง: ${b.author}</div></div><span class="status-badge status-available">เหลือ: ${b.available}</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${b.id}</div><div class="book-card-info-item"><span class="book-card-info-label">หมวด:</span> ${b.category}</div></div></div>`).join('');
+        if (list.length === 0) { container.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-10 text-slate-400"><i class="ph ph-books text-4xl mb-2"></i><span>ไม่พบหนังสือที่ค้นหา</span></div>'; return; }
+        container.innerHTML = list.map(b => `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group"><div class="flex justify-between items-start mb-2"><div class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md">${b.category}</div><span class="text-xs text-slate-400 font-mono">${b.id}</span></div><h4 class="font-bold text-slate-800 mb-1 line-clamp-2 group-hover:text-emerald-600 transition">${b.title}</h4><p class="text-sm text-slate-500 mb-3">${b.author}</p><div class="flex justify-between items-center pt-3 border-t border-slate-50"><span class="text-xs text-slate-400">คงเหลือ</span><span class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">${b.available} เล่ม</span></div></div>`).join('');
     }
     function searchAvailableBooksPublic() { updateAvailableBooksListPublic(); }
 
     async function handleAddBook(event) {
       event.preventDefault();
       const id = document.getElementById('bookId').value;
-      if (books.some(b => b.id === id)) { showToast('มีรหัสหนังสือนี้แล้ว', 'warning'); return;
-      }
+      if (books.some(b => b.id === id)) { showToast('มีรหัสหนังสือนี้แล้ว', 'warning'); return; }
       const q = parseInt(document.getElementById('bookQuantity').value);
-      const b = { id: id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, category: document.getElementById('bookCategory').value, isbn: document.getElementById('bookISBN').value ||
-      '', quantity: q, available: q, timestamp: Date.now() };
-      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'บันทึก...';
-      const s = await saveToSheets('books', b); if (s) { books.push(b); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false;
-      btn.textContent = '➕ เพิ่มหนังสือ';
+      const b = { id: id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, category: document.getElementById('bookCategory').value, isbn: document.getElementById('bookISBN').value || '', quantity: q, available: q, timestamp: Date.now() };
+      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+      const s = await saveToSheets('books', b); if (s) { books.push(b); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false; btn.textContent = 'บันทึกข้อมูลหนังสือ';
     }
 
     async function handleAddMember(event) {
       event.preventDefault();
       const id = document.getElementById('memberId').value;
-      if (members.some(m => m.id === id)) { showToast('มีรหัสสมาชิกนี้แล้ว', 'warning'); return;
-      }
-      const m = { id: id, name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value ||
-      '', phone: document.getElementById('memberPhone').value, type: document.getElementById('memberType').value, timestamp: Date.now() };
-      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'บันทึก...';
-      const s = await saveToSheets('members', m); if (s) { members.push(m); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false;
-      btn.textContent = '➕ เพิ่มสมาชิก';
+      if (members.some(m => m.id === id)) { showToast('มีรหัสสมาชิกนี้แล้ว', 'warning'); return; }
+      const m = { id: id, name: document.getElementById('memberName').value, email: document.getElementById('memberEmail').value || '', phone: document.getElementById('memberPhone').value, type: document.getElementById('memberType').value, timestamp: Date.now() };
+      const btn = event.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+      const s = await saveToSheets('members', m); if (s) { members.push(m); updateAllViews(); showToast('เพิ่มสำเร็จ!', 'success'); event.target.reset(); } btn.disabled = false; btn.textContent = 'บันทึกสมาชิก';
     }
 
     function addToCart() {
         const input = document.getElementById('borrowBookIdInput');
         const id = input.value.trim(); if (!id) return;
-        const book = books.find(b => b.id === id); if (!book) { showToast('ไม่พบรหัสหนังสือ', 'warning');
-        return; }
+        const book = books.find(b => b.id === id); if (!book) { showToast('ไม่พบรหัสหนังสือ', 'warning'); return; }
         const inCart = borrowCart.filter(i => i.id === id).length;
         if (parseInt(book.available) - inCart <= 0) { showToast('หนังสือหมดแล้ว', 'warning'); return; }
         borrowCart.push(book);
         input.value = ''; input.focus(); updateCartTable();
     }
-    function removeFromCart(i) { borrowCart.splice(i, 1); updateCartTable();
-    }
+    function removeFromCart(i) { borrowCart.splice(i, 1); updateCartTable(); }
     
-    // ✅ Modified: Add data-label for mobile card view
     function updateCartTable() {
         const tbody = document.getElementById('borrowCartTableBody');
         const btn = document.getElementById('borrowSubmitBtn');
-        if (borrowCart.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: #aaa; padding: 20px;">ยังไม่มีรายการหนังสือ</td></tr>';
-        btn.textContent = '📖 ยืนยันการยืมหนังสือทั้งหมด'; return; }
-        tbody.innerHTML = borrowCart.map((b, i) => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="จัดการ" style="text-align: center;"><button type="button" class="button-danger" style="padding: 5px 10px; font-size: 0.8em;" onclick="removeFromCart(${i})">ลบ</button></td></tr>`).join('');
-        btn.textContent = `📖 ยืนยัน (${borrowCart.length} เล่ม)`;
+        if (borrowCart.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400">ยังไม่มีรายการหนังสือ</td></tr>';
+        btn.innerHTML = '📖 ยืนยันการยืมหนังสือ'; return; }
+        tbody.innerHTML = borrowCart.map((b, i) => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="จัดการ" class="text-center"><button type="button" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition" onclick="removeFromCart(${i})"><i class="ph ph-trash"></i> ลบ</button></td></tr>`).join('');
+        btn.innerHTML = `📖 ยืนยันการยืม (${borrowCart.length} เล่ม)`;
     }
 
     async function handleBorrow(event) {
@@ -780,33 +599,27 @@
       let mid = document.getElementById('borrowMemberId').value; if (mid.includes(':')) mid = mid.split(':')[0].trim();
       const mem = members.find(m => m.id === mid);
       if (!mem) { showToast('ไม่พบรหัสสมาชิก', 'warning'); return; }
-      if (borrowCart.length === 0) { showToast('เพิ่มหนังสืออย่างน้อย 1 เล่ม', 'warning');
-      return; }
+      if (borrowCart.length === 0) { showToast('เพิ่มหนังสืออย่างน้อย 1 เล่ม', 'warning'); return; }
       const btn = document.getElementById('borrowSubmitBtn'); btn.disabled = true;
       let success = 0, fail = 0;
       for (let i = 0; i < borrowCart.length; i++) {
           const bCart = borrowCart[i];
-          btn.textContent = `⏳ บันทึก... (${i+1}/${borrowCart.length})`;
+          btn.textContent = `⏳ กำลังบันทึก... (${i+1}/${borrowCart.length})`;
           const liveB = books.find(b => b.id === bCart.id);
           if (liveB && parseInt(liveB.available) > 0) {
-              const rec = { id: 'BR'+Date.now()+Math.floor(Math.random()*1000), memberId: mid, bookId: liveB.id, bookTitle: liveB.title, borrowDate: document.getElementById('borrowDate').value, dueDate: document.getElementById('dueDate').value, returnDate: '', status: 'borrowed', notes: document.getElementById('borrowNotes').value ||
-              '', timestamp: Date.now() };
-              const s = await saveToSheets('borrows', rec); if (s) { liveB.available = parseInt(liveB.available)-1; await saveToSheets('books', liveB); borrowRecords.push(rec);
-              success++; } else fail++;
+              const rec = { id: 'BR'+Date.now()+Math.floor(Math.random()*1000), memberId: mid, bookId: liveB.id, bookTitle: liveB.title, borrowDate: document.getElementById('borrowDate').value, dueDate: document.getElementById('dueDate').value, returnDate: '', status: 'borrowed', notes: document.getElementById('borrowNotes').value || '', timestamp: Date.now() };
+              const s = await saveToSheets('borrows', rec); if (s) { liveB.available = parseInt(liveB.available)-1; await saveToSheets('books', liveB); borrowRecords.push(rec); success++; } else fail++;
           } else fail++;
       }
       updateAllViews();
       if (fail === 0) { showToast(`ยืมสำเร็จ ${success} เล่ม!`, 'success'); borrowCart = []; updateCartTable(); event.target.reset(); const t = new Date();
       const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0];
-      }
-      else { showToast(`สำเร็จ ${success}, ล้มเหลว ${fail}`, 'warning'); borrowCart = []; updateCartTable();
-      }
+      } else { showToast(`สำเร็จ ${success}, ล้มเหลว ${fail}`, 'warning'); borrowCart = []; updateCartTable(); }
       btn.disabled = false;
     }
 
     function returnBook(bid) {
-      const b = borrowRecords.find(i => i.id === bid);
-      if (!b) return;
+      const b = borrowRecords.find(i => i.id === bid); if (!b) return;
       showConfirmModal('ยืนยันการคืน', `คืนหนังสือ: ${b.bookTitle}?`, async () => {
           b.status = 'returned'; b.returnDate = new Date().toISOString().split('T')[0];
           const s = await saveToSheets('borrows', b); if (s) { const book = books.find(k => k.id === b.bookId); if (book) { book.available = parseInt(book.available)+1; await saveToSheets('books', book); } updateAllViews(); showToast('คืนสำเร็จ!', 'success'); }
@@ -814,118 +627,85 @@
     }
 
     function editHistory(rid) {
-        const r = borrowRecords.find(i => i.id === rid);
-        if (!r) return;
+        const r = borrowRecords.find(i => i.id === rid); if (!r) return;
         const m = members.find(k => k.id === r.memberId); const mName = m ? m.name : '-';
-        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="form-layout"><div class="input-group"><label>รหัสรายการ</label> <input type="text" value="${r.id}" disabled></div><div class="input-group"><label>ผู้ยืม</label> <input type="text" value="${mName}" disabled></div><div class="input-group"><label>หนังสือ</label> <input type="text" value="${r.bookTitle}" disabled></div><div class="input-group"><label>วันที่ยืม *</label> <input type="date" id="editBorrowDate" value="${r.borrowDate}" required></div><div class="input-group"><label>กำหนดคืน *</label> <input type="date" id="editDueDate" value="${r.dueDate}" required></div><div class="input-group" style="background: #e3f2fd; padding: 10px; border-radius: 8px;"><label style="color: #0d47a1;">วันที่คืน</label> <input type="date" id="editReturnDate" value="${r.returnDate || ''}"><p style="font-size: 0.8em; color: #666; margin-top: 5px;">* ใส่วันที่คืน = คืนแล้ว</p></div></div>`;
+        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="space-y-3"><div class="grid grid-cols-2 gap-2"><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">รหัสรายการ</label><div class="font-mono text-sm">${r.id}</div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">ผู้ยืม</label><div class="text-sm truncate">${mName}</div></div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">หนังสือ</label><div class="text-sm font-medium">${r.bookTitle}</div></div><div><label class="text-sm font-semibold">วันที่ยืม</label><input type="date" id="editBorrowDate" value="${r.borrowDate}" class="w-full p-2 border rounded mt-1"></div><div><label class="text-sm font-semibold">กำหนดคืน</label><input type="date" id="editDueDate" value="${r.dueDate}" class="w-full p-2 border rounded mt-1"></div><div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><label class="text-sm font-semibold text-blue-700">วันที่คืน (ถ้ามี)</label><input type="date" id="editReturnDate" value="${r.returnDate || ''}" class="w-full p-2 border border-blue-200 rounded mt-1 bg-white"></div></div>`;
         showEditModal(`✏️ แก้ไขประวัติ`, html, updateHistoryDetails);
     }
     async function updateHistoryDetails() {
-        const id = document.getElementById('editHistoryId').value;
-        const old = borrowRecords.find(r => r.id === id);
+        const id = document.getElementById('editHistoryId').value; const old = borrowRecords.find(r => r.id === id);
         const up = { ...old, borrowDate: document.getElementById('editBorrowDate').value, dueDate: document.getElementById('editDueDate').value, returnDate: document.getElementById('editReturnDate').value };
         up.status = up.returnDate ? 'returned' : 'borrowed';
-        const idx = borrowRecords.findIndex(r => r.id === id);
-        if (idx !== -1) borrowRecords[idx] = up;
+        const idx = borrowRecords.findIndex(r => r.id === id); if (idx !== -1) borrowRecords[idx] = up;
         showLoading(); const s = await saveToSheets('borrows', up); hideLoading();
-        if (s) { updateAllViews();
-        showToast('แก้ไขสำเร็จ', 'success'); return true; } else { if (idx !== -1) borrowRecords[idx] = old; updateAllViews(); return false;
-        }
+        if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true; } else { if (idx !== -1) borrowRecords[idx] = old; updateAllViews(); return false; }
     }
 
     function editBook(bid) {
-      const b = findItem(books, bid);
-      if (!b) return;
+      const b = findItem(books, bid); if (!b) return;
       const cats = ['นิยาย','การ์ตูน','ความรู้ทั่วไป','สาระทักษะการเรียนรู้','สาระความรู้พื้นฐาน','สาระการประกอบอาชีพ','สาระทักษะการดำเนินชีวิต','สาระการพัฒนาสังคม','อื่นๆ'].map(c => `<option value="${c}" ${b.category === c ? 'selected' : ''}>${c}</option>`).join('');
-      const html = `<input type="hidden" id="editBookId" value="${b.id}"><div class="form-layout"><div class="input-group"><label>ชื่อหนังสือ *</label> <input type="text" id="editBookTitle" value="${b.title}" required></div><div class="input-group"><label>ผู้แต่ง *</label> <input type="text" id="editBookAuthor" value="${b.author}" required></div><div class="input-group"><label>หมวดหมู่ *</label> <select id="editBookCategory" required><option value="">เลือกหมวดหมู่</option>${cats}</select></div><div class="input-group"><label>ISBN</label> <input type="text" id="editBookISBN" value="${b.isbn||''}"></div><div class="input-group"><label>จำนวนทั้งหมด *</label> <input type="number" id="editBookQuantity" value="${b.quantity}" required min="1"></div><div class="input-group"><label>พร้อมให้ยืม</label> <input type="number" value="${b.available}" disabled></div></div>`;
+      const html = `<input type="hidden" id="editBookId" value="${b.id}"><div class="space-y-3"><div class="space-y-1"><label class="text-sm">ชื่อหนังสือ</label><input type="text" id="editBookTitle" value="${b.title}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">ผู้แต่ง</label><input type="text" id="editBookAuthor" value="${b.author}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">หมวดหมู่</label><select id="editBookCategory" class="w-full p-2 border rounded">${cats}</select></div><div class="grid grid-cols-2 gap-3"><div class="space-y-1"><label class="text-sm">ISBN</label><input type="text" id="editBookISBN" value="${b.isbn||''}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">จำนวนทั้งหมด</label><input type="number" id="editBookQuantity" value="${b.quantity}" class="w-full p-2 border rounded" min="1"></div></div></div>`;
       showEditModal(`✏️ แก้ไขหนังสือ`, html, updateBookDetails);
     }
     async function updateBookDetails() {
-      const id = document.getElementById('editBookId').value;
-      const old = findItem(books, id);
+      const id = document.getElementById('editBookId').value; const old = findItem(books, id);
       const newQ = parseInt(document.getElementById('editBookQuantity').value);
-      if (newQ < parseInt(old.quantity) - parseInt(old.available)) { showToast('จำนวนน้อยกว่าที่ถูกยืม', 'warning'); return false;
-      }
+      if (newQ < parseInt(old.quantity) - parseInt(old.available)) { showToast('จำนวนน้อยกว่าที่ถูกยืม', 'warning'); return false; }
       const newAv = parseInt(old.available) + (newQ - parseInt(old.quantity));
       const up = { id: id, title: document.getElementById('editBookTitle').value, author: document.getElementById('editBookAuthor').value, category: document.getElementById('editBookCategory').value, isbn: document.getElementById('editBookISBN').value, quantity: newQ, available: newAv, timestamp: old.timestamp };
       const idx = books.findIndex(b => b.id === id); if (idx !== -1) books[idx] = up;
-      showLoading();
-      const s = await saveToSheets('books', up); hideLoading();
-      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true;
-      } else { if (idx !== -1) books[idx] = old; updateAllViews(); return false;
-      }
+      showLoading(); const s = await saveToSheets('books', up); hideLoading();
+      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true; } else { if (idx !== -1) books[idx] = old; updateAllViews(); return false; }
     }
 
     function editMember(mid) {
-      const m = findItem(members, mid);
-      if (!m) return;
+      const m = findItem(members, mid); if (!m) return;
       const types = [{v:'ประถมศึกษา',t:'ประถมศึกษา'},{v:'มัธยมศึกษาตอนต้น',t:'มัธยมศึกษาตอนต้น'},{v:'มัธยมศึกษาตอนปลาย',t:'มัธยมศึกษาตอนปลาย'},{v:'ครู',t:'ครู'},{v:'บุคลากร',t:'บุคลากร'},{v:'ทั่วไป',t:'บุคคลทั่วไป'}].map(t => `<option value="${t.v}" ${m.type === t.v ? 'selected' : ''}>${t.t}</option>`).join('');
-      const html = `<input type="hidden" id="editMemberId" value="${m.id}"><div class="form-layout"><div class="input-group"><label>ชื่อ-สกุล *</label> <input type="text" id="editMemberName" value="${m.name}" required></div><div class="input-group"><label>อีเมล</label> <input type="email" id="editMemberEmail" value="${m.email||''}"></div><div class="input-group"><label>เบอร์โทร *</label> <input type="tel" id="editMemberPhone" value="${m.phone}" required></div><div class="input-group"><label>ประเภท *</label> <select id="editMemberType" required>${types}</select></div></div>`;
+      const html = `<input type="hidden" id="editMemberId" value="${m.id}"><div class="space-y-3"><div class="space-y-1"><label class="text-sm">ชื่อ-สกุล</label><input type="text" id="editMemberName" value="${m.name}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">อีเมล</label><input type="email" id="editMemberEmail" value="${m.email||''}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">เบอร์โทร</label><input type="tel" id="editMemberPhone" value="${m.phone}" class="w-full p-2 border rounded"></div><div class="space-y-1"><label class="text-sm">ประเภท</label><select id="editMemberType" class="w-full p-2 border rounded">${types}</select></div></div>`;
       showEditModal(`✏️ แก้ไขสมาชิก`, html, updateMemberDetails);
     }
     async function updateMemberDetails() {
-      const id = document.getElementById('editMemberId').value;
-      const old = findItem(members, id);
+      const id = document.getElementById('editMemberId').value; const old = findItem(members, id);
       const up = { id: id, name: document.getElementById('editMemberName').value, email: document.getElementById('editMemberEmail').value, phone: document.getElementById('editMemberPhone').value, type: document.getElementById('editMemberType').value, timestamp: old.timestamp };
       const idx = members.findIndex(m => m.id === id); if (idx !== -1) members[idx] = up;
-      showLoading();
-      const s = await saveToSheets('members', up); hideLoading();
-      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true;
-      } else { if (idx !== -1) members[idx] = old; updateAllViews(); return false;
-      }
+      showLoading(); const s = await saveToSheets('members', up); hideLoading();
+      if (s) { updateAllViews(); showToast('แก้ไขสำเร็จ', 'success'); return true; } else { if (idx !== -1) members[idx] = old; updateAllViews(); return false; }
     }
 
-    function deleteBook(id) { const b = books.find(i => i.id === id);
-      if (!b) return; if (borrowRecords.some(r => r.bookId === id && r.status === 'borrowed')) { showToast('หนังสือถูกยืมอยู่', 'error'); return;
-      } showConfirmModal('ลบหนังสือ', `ลบ: ${b.title}?`, async () => { const s = await deleteFromSheets('books', id); if (s) { books = books.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } });
-    }
-    function deleteMember(id) { const m = members.find(i => i.id === id); if (!m) return;
-      if (borrowRecords.some(r => r.memberId === id && r.status === 'borrowed')) { showToast('สมาชิกยืมของอยู่', 'error'); return;
-      } showConfirmModal('ลบสมาชิก', `ลบ: ${m.name}?`, async () => { const s = await deleteFromSheets('members', id); if (s) { members = members.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } });
-    }
+    function deleteBook(id) { const b = books.find(i => i.id === id); if (!b) return; if (borrowRecords.some(r => r.bookId === id && r.status === 'borrowed')) { showToast('หนังสือถูกยืมอยู่', 'error'); return; } showConfirmModal('ลบหนังสือ', `ลบ: ${b.title}?`, async () => { const s = await deleteFromSheets('books', id); if (s) { books = books.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } }); }
+    function deleteMember(id) { const m = members.find(i => i.id === id); if (!m) return; if (borrowRecords.some(r => r.memberId === id && r.status === 'borrowed')) { showToast('สมาชิกยืมของอยู่', 'error'); return; } showConfirmModal('ลบสมาชิก', `ลบ: ${m.name}?`, async () => { const s = await deleteFromSheets('members', id); if (s) { members = members.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } }); }
 
-    // ✅ Modified: Add data-label for mobile card view
     function updateBooksTable() {
-      const term = document.getElementById('searchBooks')?.value.toLowerCase() ||
-      '';
+      const term = document.getElementById('searchBooks')?.value.toLowerCase() || '';
       const list = books.filter(b => b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term));
       const tbody = document.getElementById('booksTableBody');
-      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="empty-message"><div class="empty-icon">📚</div><h3>ยังไม่มีหนังสือ</h3></td></tr>`; return;
-      }
-      tbody.innerHTML = list.map(b => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="ผู้แต่ง">${b.author}</td><td data-label="หมวดหมู่">${b.category}</td><td data-label="ISBN">${b.isbn||'-'}</td><td data-label="จำนวน">${b.quantity}</td><td data-label="เหลือ">${b.available}</td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editBook('${b.id}')">✏️</button><button class="button-danger" onclick="deleteBook('${b.id}')">🗑️</button></div></td></tr>`).join('');
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">ยังไม่มีหนังสือ</td></tr>`; return; }
+      tbody.innerHTML = list.map(b => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ"><div class="font-medium">${b.title}</div></td><td data-label="ผู้แต่ง">${b.author}</td><td data-label="หมวดหมู่"><span class="px-2 py-1 bg-slate-100 rounded text-xs">${b.category}</span></td><td data-label="ISBN" class="text-xs text-slate-500">${b.isbn||'-'}</td><td data-label="จำนวน">${b.quantity}</td><td data-label="เหลือ" class="font-bold ${parseInt(b.available)>0?'text-emerald-600':'text-red-500'}">${b.available}</td><td data-label="จัดการ"><div class="action-button-group flex gap-2"><button class="p-2 text-blue-600 hover:bg-blue-50 rounded" onclick="editBook('${b.id}')"><i class="ph ph-pencil-simple"></i></button><button class="p-2 text-red-600 hover:bg-red-50 rounded" onclick="deleteBook('${b.id}')"><i class="ph ph-trash"></i></button></div></td></tr>`).join('');
     }
 
-    // ✅ Modified: Add data-label for mobile card view
     function updateMembersTable() {
-      const term = document.getElementById('searchMembers')?.value.toLowerCase() ||
-      ''; const type = document.getElementById('filterMemberType')?.value || '';
+      const term = document.getElementById('searchMembers')?.value.toLowerCase() || ''; const type = document.getElementById('filterMemberType')?.value || '';
       const list = members.filter(m => (m.id.toLowerCase().includes(term) || m.name.toLowerCase().includes(term)) && (!type || m.type === type));
       const tbody = document.getElementById('membersTableBody');
-      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-message"><div class="empty-icon">👥</div><h3>ยังไม่มีสมาชิก</h3></td></tr>`; return;
-      }
-      tbody.innerHTML = list.map(m => `<tr><td data-label="รหัส">${m.id}</td><td data-label="ชื่อ-สกุล">${m.name}</td><td data-label="อีเมล">${m.email||'-'}</td><td data-label="โทร">${m.phone}</td><td data-label="ประเภท">${m.type}</td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editMember('${m.id}')">✏️</button><button class="button-danger" onclick="deleteMember('${m.id}')">🗑️</button></div></td></tr>`).join('');
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">ยังไม่มีสมาชิก</td></tr>`; return; }
+      tbody.innerHTML = list.map(m => `<tr><td data-label="รหัส">${m.id}</td><td data-label="ชื่อ-สกุล" class="font-medium">${m.name}</td><td data-label="อีเมล" class="text-sm">${m.email||'-'}</td><td data-label="โทร">${m.phone}</td><td data-label="ประเภท"><span class="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs border border-blue-100">${m.type}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2"><button class="p-2 text-blue-600 hover:bg-blue-50 rounded" onclick="editMember('${m.id}')"><i class="ph ph-pencil-simple"></i></button><button class="p-2 text-red-600 hover:bg-red-50 rounded" onclick="deleteMember('${m.id}')"><i class="ph ph-trash"></i></button></div></td></tr>`).join('');
     }
 
-    // ✅ Modified: Add data-label for mobile card view
     function updateHistoryTable() {
-      const term = document.getElementById('searchHistory')?.value.toLowerCase() ||
-      ''; const status = document.getElementById('filterStatus')?.value || '';
+      const term = document.getElementById('searchHistory')?.value.toLowerCase() || ''; const status = document.getElementById('filterStatus')?.value || '';
       let list = borrowRecords.filter(r => {
         const m = members.find(i => i.id === r.memberId); const mName = m ? m.name.toLowerCase() : '';
         const match = r.memberId.toLowerCase().includes(term) || r.bookId.toLowerCase().includes(term) || r.bookTitle.toLowerCase().includes(term) || mName.includes(term);
-        let sMatch = true; if (status === 'borrowed') sMatch = r.status === 'borrowed' && new Date(r.dueDate) >= new Date(); else if (status === 'returned') sMatch = r.status === 'returned'; else if (status === 'overdue') sMatch = r.status === 'borrowed' && 
-        new Date(r.dueDate) < new Date();
+        let sMatch = true; if (status === 'borrowed') sMatch = r.status === 'borrowed' && new Date(r.dueDate) >= new Date(); else if (status === 'returned') sMatch = r.status === 'returned'; else if (status === 'overdue') sMatch = r.status === 'borrowed' && new Date(r.dueDate) < new Date();
         return match && sMatch;
       });
       list.sort((a, b) => b.timestamp - a.timestamp);
       const tbody = document.getElementById('historyTableBody');
-      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-message"><div class="empty-icon">📋</div><h3>ยังไม่มีประวัติ</h3></td></tr>`; return;
-      }
+      if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="text-center py-6 text-slate-400">ยังไม่มีประวัติ</td></tr>`; return; }
       tbody.innerHTML = list.map(r => {
         let badge = '', cls = ''; const m = members.find(i => i.id === r.memberId); const mName = m ? m.name : '-';
-        if (r.status === 'returned') { badge = 'คืนแล้ว'; cls = 'status-returned'; } else if (new Date(r.dueDate) < new Date()) { badge = 'เกินกำหนด'; cls = 'status-overdue'; } else { badge = 'กำลังยืม'; cls = 'status-borrowed'; }
-        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ">${r.bookTitle}</td><td data-label="วันที่ยืม">${r.borrowDate}</td><td data-label="กำหนดคืน">${r.dueDate}</td><td data-label="วันที่คืน">${r.returnDate||'-'}</td><td 
-        data-label="สถานะ"><span class="status-badge ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group"><button class="button-secondary" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="button-success" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
+        if (r.status === 'returned') { badge = 'คืนแล้ว'; cls = 'bg-blue-100 text-blue-700'; } else if (new Date(r.dueDate) < new Date()) { badge = 'เกินกำหนด'; cls = 'bg-red-100 text-red-700'; } else { badge = 'กำลังยืม'; cls = 'bg-emerald-100 text-emerald-700'; }
+        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม" class="font-medium text-slate-800">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ" class="text-sm">${r.bookTitle}</td><td data-label="วันที่ยืม">${r.borrowDate}</td><td data-label="กำหนดคืน">${r.dueDate}</td><td data-label="วันที่คืน">${r.returnDate||'-'}</td><td data-label="สถานะ"><span class="px-2 py-1 rounded-full text-xs font-bold ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2 items-center"><button class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-2 py-1 rounded font-bold" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
       }).join('');
     }
 
@@ -933,9 +713,8 @@
       const term = document.getElementById('searchAvailableBooks')?.value.toLowerCase() || '';
       let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)));
       const container = document.getElementById('availableBooksList');
-      if (list.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบหนังสือ</h3></div>'; return;
-      }
-      container.innerHTML = list.map(b => `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.title}</div><div class="book-card-author">${b.author}</div></div><span class="status-badge status-available">${b.available} เล่ม</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">รหัส:</span> ${b.id}</div></div></div>`).join('');
+      if (list.length === 0) { container.innerHTML = '<div class="text-center py-4 text-slate-400 col-span-full">ไม่พบหนังสือ</div>'; return; }
+      container.innerHTML = list.map(b => `<div class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center group cursor-pointer hover:border-emerald-400 transition" onclick="document.getElementById('borrowBookIdInput').value='${b.id}'; addToCart();"><div><div class="font-bold text-sm text-slate-700">${b.title}</div><div class="text-xs text-slate-400">${b.id} • ${b.author}</div></div><span class="bg-white border border-slate-200 text-emerald-600 text-xs font-bold px-2 py-1 rounded-lg">${b.available}</span></div>`).join('');
     }
 
     function updateBorrowedBooksList() {
@@ -946,50 +725,43 @@
       });
       list.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       const container = document.getElementById('borrowedBooksList');
-      if (list.length === 0) { container.innerHTML = '<div class="empty-message"><h3>ไม่พบรายการยืม</h3></div>'; return;
-      }
+      if (list.length === 0) { container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400"><i class="ph ph-tray text-4xl mb-2"></i><br>ไม่พบรายการยืม</div>'; return; }
       container.innerHTML = list.map(b => {
         const m = members.find(i => i.id === b.memberId); const isOver = new Date(b.dueDate) < new Date();
-        return `<div class="book-card"><div class="book-card-header"><div><div class="book-card-title">${b.bookTitle}</div><div class="book-card-author">ผู้ยืม: ${m ? m.name : b.memberId}</div></div><span class="status-badge ${isOver ? 'status-overdue' : 'status-borrowed'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><div class="book-card-info"><div class="book-card-info-item"><span class="book-card-info-label">กำหนดคืน:</span> ${b.dueDate}</div></div><div style="margin-top: 15px;"><button class="button-success" onclick="returnBook('${b.id}')">📥 คืน</button></div></div>`;
+        return `<div class="bg-white p-5 rounded-2xl shadow-sm border ${isOver ? 'border-red-200' : 'border-slate-100'} hover:shadow-md transition"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">${b.memberId.substring(0,2)}</div><div><div class="font-bold text-slate-800 text-sm">${m ? m.name : b.memberId}</div><div class="text-xs text-slate-400">ผู้ยืม</div></div></div><span class="px-2 py-1 rounded text-xs font-bold ${isOver ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><h4 class="font-bold text-slate-700 mb-1">${b.bookTitle}</h4><p class="text-xs text-slate-400 mb-4">กำหนดคืน: ${b.dueDate}</p><button onclick="returnBook('${b.id}')" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-500 hover:text-white transition flex items-center justify-center gap-2"><i class="ph ph-arrow-u-down-left"></i> รับคืนหนังสือ</button></div>`;
       }).join('');
     }
 
-    function searchBooks() { updateBooksTable(); } function searchMembers() { updateMembersTable(); } function searchHistory() { updateHistoryTable();
-    } function searchAvailableBooks() { updateAvailableBooksList(); } function searchBorrowedBooks() { updateBorrowedBooksList();
-    }
+    function searchBooks() { updateBooksTable(); } function searchMembers() { updateMembersTable(); } function searchHistory() { updateHistoryTable(); } function searchAvailableBooks() { updateAvailableBooksList(); } function searchBorrowedBooks() { updateBorrowedBooksList(); }
 
     function exportHistory() {
-      if (borrowRecords.length === 0) { showToast('ไม่มีข้อมูล', 'warning'); return;
-      }
+      if (borrowRecords.length === 0) { showToast('ไม่มีข้อมูล', 'warning'); return; }
       const headers = ['รหัสสมาชิก', 'ชื่อผู้ยืม', 'รหัสหนังสือ', 'ชื่อหนังสือ', 'วันที่ยืม', 'กำหนดคืน', 'วันที่คืน', 'สถานะ'];
       const csv = borrowRecords.map(r => {
         let st = r.status === 'returned' ? 'คืนแล้ว' : (new Date(r.dueDate) < new Date() ? 'เกินกำหนด' : 'กำลังยืม'); const m = members.find(i => i.id === r.memberId); const mn = m ? m.name : '-';
         return [r.memberId, `"${mn}"`, r.bookId, `"${r.bookTitle.replace(/"/g, '""')}"`, r.borrowDate, r.dueDate, r.returnDate || '', st].join(',');
       }).join('\n');
-      const blob = new Blob(["\ufeff", headers.join(',') + '\n' + csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = 
-      `library_history_${new Date().toISOString().split('T')[0]}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      const blob = new Blob(["\ufeff", headers.join(',') + '\n' + csv], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `library_history_${new Date().toISOString().split('T')[0]}.csv`; document.body.appendChild(link); link.click(); document.body.removeChild(link);
     }
     
     function initializeCharts() {
-      const opts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, plugins: { legend: { display: false } } };
+      const opts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0 } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } };
       if (charts.borrow) charts.borrow.destroy();
-      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(102, 187, 106, 0.5)', borderColor: '#66bb6a', borderWidth: 2, tension: 0.4 }] }, options: opts });
-      if (charts.popular) charts.popular.destroy(); charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: '#ffb74d' }] }, options: { ...opts, indexAxis: 'y' } });
+      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981', borderWidth: 2, pointBackgroundColor: '#ffffff', pointBorderColor: '#10b981', fill: true, tension: 0.4 }] }, options: opts });
+      if (charts.popular) charts.popular.destroy(); charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: '#fbbf24', borderRadius: 6 }] }, options: { ...opts, indexAxis: 'y' } });
     }
 
     function updateCharts() {
       if (!charts.borrow || !charts.popular) return;
       const last7 = [], counts = [];
       for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
+        const d = new Date(); d.setDate(d.getDate() - i);
         const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
         const ds = `${y}-${m}-${day}`; last7.push(`${d.getDate()}/${d.getMonth() + 1}`);
         counts.push(borrowRecords.filter(b => b.borrowDate === ds).length);
       }
       charts.borrow.data.labels = last7; charts.borrow.data.datasets[0].data = counts; charts.borrow.update();
-      const bc = {};
-      borrowRecords.forEach(b => bc[b.bookTitle] = (bc[b.bookTitle] || 0) + 1);
+      const bc = {}; borrowRecords.forEach(b => bc[b.bookTitle] = (bc[b.bookTitle] || 0) + 1);
       const top = Object.entries(bc).sort((a, b) => b[1] - a[1]).slice(0, 10);
       charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]); charts.popular.update();
     }
@@ -1000,5 +772,5 @@
     else onConfigChange(defaultConfig); initializeCharts(); loadDataFromSheets(); updateAvailableBooksListPublic(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeApp); else initializeApp();
   </script>
- </body>
+</body>
 </html>
