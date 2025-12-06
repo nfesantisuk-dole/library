@@ -21,8 +21,8 @@
             sans: ['Prompt', 'sans-serif'] 
           },
           colors: {
-            primary: '#10b981', // Emerald 500
-            secondary: '#34d399', // Emerald 400
+            primary: '#10b981', 
+            secondary: '#34d399',
             dark: '#064e3b',
             bg: '#f0fdf4'
           }
@@ -35,13 +35,15 @@
     /* Custom Styles */
     body { -webkit-tap-highlight-color: transparent; }
     
-    /* Scrollbar */
+    input, button, select, textarea {
+      font-family: 'Prompt', sans-serif !important;
+    }
+    
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* Transitions */
     .content-section { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease-in-out; }
     .content-section.active { display: block; opacity: 1; transform: translateY(0); }
 
@@ -76,7 +78,6 @@
       .action-button-group { justify-content: center; }
     }
 
-    /* Desktop Table */
     @media (min-width: 769px) {
       .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
       .data-table th { background-color: #f0fdf4; color: #065f46; font-weight: 600; padding: 1rem; text-align: left; border-bottom: 2px solid #bbf7d0; }
@@ -84,28 +85,24 @@
       .data-table tr:hover td { background-color: #f8fafc; }
     }
 
-    /* Loading Spinner */
     .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(4px); z-index: 9999; display: flex; justify-content: center; align-items: center; }
     .spinner { width: 48px; height: 48px; border: 5px solid #10b981; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; }
     @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Toast */
     .toast { position: fixed; top: 20px; right: 20px; padding: 1rem 1.5rem; border-radius: 0.75rem; color: white; font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 10000; animation: slideIn 0.3s ease-out; }
     .toast-success { background: #10b981; }
     .toast-error { background: #ef4444; }
     .toast-warning { background: #f59e0b; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* Admin Toggle */
     .admin-only { display: none !important; }
     .show-admin .admin-only { display: block !important; }
-    /* Mobile Nav Hide Admin */
     @media (max-width: 768px) {
         .show-admin .nav-item.admin-only { display: flex !important; }
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen pb-24 md:pb-0">
+<body class="bg-slate-50 text-slate-700 min-h-screen pb-24 md:pb-0 font-sans">
 
   <div id="loadingOverlay" class="loading-overlay" style="display:none;">
     <div class="spinner"></div>
@@ -142,7 +139,7 @@
         <i class="ph ph-house text-xl group-hover:scale-110 transition-transform"></i> หน้าแรก
       </button>
       <button onclick="navigateTo('borrow')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="borrow">
-        <i class="ph ph-hand-holding text-xl group-hover:scale-110 transition-transform"></i> ยืมหนังสือ
+        <i class="ph ph-shopping-cart text-xl group-hover:scale-110 transition-transform"></i> ยืมหนังสือ
       </button>
       <button onclick="navigateTo('return')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="return">
         <i class="ph ph-arrow-u-down-left text-xl group-hover:scale-110 transition-transform"></i> คืนหนังสือ
@@ -229,7 +226,7 @@
       <section id="borrow" class="content-section space-y-6">
         <div class="bg-white p-6 rounded-2xl shadow-lg shadow-emerald-100/50">
           <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph ph-hand-holding text-xl"></i></div>
+             <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="ph ph-shopping-cart text-xl"></i></div>
              <div>
                <h2 class="text-xl font-bold text-slate-800">ทำรายการยืมหนังสือ</h2>
                <p class="text-sm text-slate-500">บันทึกข้อมูลการยืมเข้าระบบ</p>
@@ -387,7 +384,7 @@
      </button>
      
      <button onclick="navigateTo('borrow')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="borrow">
-       <i class="ph ph-hand-holding text-2xl"></i> <span class="text-[10px] font-medium">ยืม</span>
+       <i class="ph ph-shopping-cart text-2xl"></i> <span class="text-[10px] font-medium">ยืม</span>
      </button>
      
      <button onclick="navigateTo('return')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="return">
@@ -421,20 +418,61 @@
       contact_info: "© 2025 ศกร.ระดับตำบลสันติสุข <br class='block md:hidden'> <span class='hidden md:inline'>|</span> พัฒนาโดย นายยุรนันท์ ขันแข่งบุญ",
     };
 
-    // --- Helper Function: แปลงวันที่เป็นไทย (DD-MM-YYYY+543) ---
+    // --- Color Mapping for Categories (UI Badges) ---
+    const categoryColors = {
+      'นิยาย': 'bg-pink-100 text-pink-700',
+      'การ์ตูน': 'bg-orange-100 text-orange-700',
+      'ความรู้ทั่วไป': 'bg-sky-100 text-sky-700',
+      'สาระทักษะการเรียนรู้': 'bg-purple-100 text-purple-700', 
+      'สาระความรู้พื้นฐาน': 'bg-cyan-100 text-cyan-700',       
+      'สาระการประกอบอาชีพ': 'bg-red-100 text-red-700',         
+      'สาระทักษะการดำเนินชีวิต': 'bg-emerald-100 text-emerald-700', 
+      'สาระการพัฒนาสังคม': 'bg-indigo-100 text-indigo-700',    
+      'อื่นๆ': 'bg-slate-100 text-slate-700'
+    };
+
+    // --- Title Text Colors (Matching Badge) ---
+    // Globally Accessible
+    const categoryTitleColors = {
+      'นิยาย': 'text-pink-600',
+      'การ์ตูน': 'text-orange-600',
+      'ความรู้ทั่วไป': 'text-sky-600',
+      'สาระทักษะการเรียนรู้': 'text-purple-700', 
+      'สาระความรู้พื้นฐาน': 'text-cyan-700',       
+      'สาระการประกอบอาชีพ': 'text-red-600',         
+      'สาระทักษะการดำเนินชีวิต': 'text-emerald-600', 
+      'สาระการพัฒนาสังคม': 'text-indigo-700',    
+      'อื่นๆ': 'text-slate-600'
+    };
+
+    // --- Color Mapping for Chart (Hex Codes) ---
+    const categoryChartColors = {
+      'นิยาย': '#ec4899', 
+      'การ์ตูน': '#f97316', 
+      'ความรู้ทั่วไป': '#0ea5e9', 
+      'สาระทักษะการเรียนรู้': '#a855f7', 
+      'สาระความรู้พื้นฐาน': '#0891b2', 
+      'สาระการประกอบอาชีพ': '#ef4444', 
+      'สาระทักษะการดำเนินชีวิต': '#10b981', 
+      'สาระการพัฒนาสังคม': '#6366f1', 
+      'อื่นๆ': '#64748b' 
+    };
+
     function formatThaiDate(dateString) {
         if (!dateString) return '-';
-        const parts = dateString.split('-'); // แยก 2025, 06, 01
+        const parts = dateString.split('-'); 
         if (parts.length !== 3) return dateString;
-        
-        const year = parseInt(parts[0]) + 543; // แปลง ค.ศ. เป็น พ.ศ.
+        const year = parseInt(parts[0]) + 543;
         const month = parts[1];
         const day = parts[2];
-        
         return `${day}-${month}-${year}`;
     }
 
-    // UI Helper: Active Class Toggle
+    // --- Helper to get title color by book ID (Updated) ---
+    function getTitleColorClass(category) {
+        return categoryTitleColors[category] || 'text-slate-700';
+    }
+
     function updateNavUI(targetId) {
         document.querySelectorAll('.nav-button').forEach(b => {
             b.classList.remove('text-emerald-600', 'bg-emerald-50', 'active', 'border-emerald-200');
@@ -447,6 +485,7 @@
         });
     }
 
+    // ... (Login/Logout/Connection functions remain the same) ...
     function showLoginModal() {
         const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.id = 'loginOverlay';
         overlay.innerHTML = `<div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative animate-[slideIn_0.2s_ease-out]"><div class="text-4xl mb-4">🔐</div><h3 class="text-xl font-bold mb-2">เข้าสู่ระบบแอดมิน</h3><p class="text-slate-500 text-sm mb-6">กรุณากรอกรหัสผ่านเพื่อจัดการระบบ</p><form onsubmit="handleLogin(event)"><input type="password" id="adminPassword" class="w-full p-3 border border-slate-200 rounded-xl text-center text-lg tracking-widest mb-4 focus:border-emerald-500 outline-none" placeholder="••••••" required><div class="flex gap-2"><button type="button" class="flex-1 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200" onclick="document.getElementById('loginOverlay').remove()">ยกเลิก</button><button type="submit" class="flex-1 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 shadow-lg shadow-emerald-200">เข้าสู่ระบบ</button></div></form></div>`;
@@ -464,12 +503,19 @@
     document.getElementById('adminLoginBtn').style.display = 'flex'; document.getElementById('adminLogoutBtn').style.display = 'none'; navigateTo('dashboard'); showToast('ออกจากระบบแล้ว', 'success'); }
 
     function updateConnectionStatus(status) {
-      const statusEl = document.getElementById('connectionStatus'), iconEl = document.getElementById('statusIcon'), textEl = document.getElementById('statusText');
-      statusEl.className = 'hidden md:flex px-3 py-1 rounded-full text-xs font-semibold items-center gap-1 transition-colors duration-300';
-      
-      if (status === 'connected') { statusEl.classList.add('bg-emerald-100', 'text-emerald-700'); iconEl.textContent = '✅'; textEl.textContent = 'ออนไลน์'; isConnected = true; }
-      else if (status === 'syncing') { statusEl.classList.add('bg-amber-100', 'text-amber-700'); iconEl.textContent = '🔄'; textEl.textContent = 'กำลังซิงค์...'; }
-      else { statusEl.classList.add('bg-red-100', 'text-red-700'); iconEl.textContent = '❌'; textEl.textContent = 'ออฟไลน์'; isConnected = false; }
+      const statusEl = document.getElementById('connectionStatus');
+      const iconEl = document.getElementById('statusIcon');
+      const textEl = document.getElementById('statusText');
+      statusEl.className = 'hidden md:flex px-3 py-1 rounded-full text-xs font-semibold items-center gap-1 transition-all duration-500';
+      statusEl.style.opacity = '1';
+      if (status === 'connected') { 
+          statusEl.classList.add('bg-emerald-100', 'text-emerald-700'); iconEl.innerHTML = '<i class="ph-fill ph-wifi-high"></i>'; textEl.textContent = 'ออนไลน์'; isConnected = true; 
+          setTimeout(() => { statusEl.style.opacity = '0'; setTimeout(() => statusEl.style.display = 'none', 500); }, 3000);
+      } else if (status === 'syncing') { 
+          statusEl.classList.add('bg-amber-100', 'text-amber-700'); iconEl.innerHTML = '<i class="ph ph-spinner animate-spin"></i>'; textEl.textContent = 'กำลังเชื่อมต่อ...'; statusEl.style.display = 'flex'; 
+      } else { 
+          statusEl.classList.add('bg-red-100', 'text-red-700'); iconEl.innerHTML = '<i class="ph-fill ph-wifi-slash"></i>'; textEl.textContent = 'ออฟไลน์'; isConnected = false; statusEl.style.display = 'flex'; 
+      }
     }
     
     function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
@@ -483,67 +529,22 @@
     }
 
     async function loadDataFromSheets() {
-      if (isConnected) return; showLoading(); updateConnectionStatus('syncing');
-      try { const r = await scriptRequest({ action: 'getData' }); if (r && r.success) { books = r.books || [];
-      members = r.members || []; borrowRecords = r.borrowRecords || []; updateConnectionStatus('connected'); updateAllViews(); hideLoading(); showToast('โหลดข้อมูลสำเร็จ!', 'success'); return true;
-      } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); hideLoading(); showToast('ไม่สามารถโหลดข้อมูลได้', 'error'); return false;
-      }
+      if (isConnected) return; showLoading(); updateConnectionStatus('syncing'); 
+      try { const r = await scriptRequest({ action: 'getData' }); if (r && r.success) { books = r.books || []; members = r.members || []; borrowRecords = r.borrowRecords || []; updateConnectionStatus('connected'); updateAllViews(); hideLoading(); showToast('โหลดข้อมูลสำเร็จ!', 'success'); return true; } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); hideLoading(); showToast('ไม่สามารถโหลดข้อมูลได้', 'error'); return false; }
     }
 
-    async function saveToSheets(sheet, data) { try { updateConnectionStatus('syncing');
-    const r = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) }); if (r && r.success) { updateConnectionStatus('connected'); return true;
-    } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('บันทึกไม่สำเร็จ', 'error'); return false;
-    } }
-    async function deleteFromSheets(sheet, id) { try { updateConnectionStatus('syncing');
-    const r = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id }); if (r && r.success) { updateConnectionStatus('connected'); return true;
-    } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('ลบไม่สำเร็จ', 'error'); return false;
-    } }
+    async function saveToSheets(sheet, data) { try { updateConnectionStatus('syncing'); const r = await scriptRequest({ action: 'saveData', sheet: sheet, data: JSON.stringify(data) }); if (r && r.success) { updateConnectionStatus('connected'); return true; } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('บันทึกไม่สำเร็จ', 'error'); return false; } }
+    async function deleteFromSheets(sheet, id) { try { updateConnectionStatus('syncing'); const r = await scriptRequest({ action: 'deleteData', sheet: sheet, id: id }); if (r && r.success) { updateConnectionStatus('connected'); return true; } else { throw new Error(r?.error); } } catch (e) { updateConnectionStatus('disconnected'); showToast('ลบไม่สำเร็จ', 'error'); return false; } }
 
-    function showToast(message, type = 'success') { const toast = document.createElement('div'); toast.className = `toast toast-${type}`;
-    toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
-    
-    function showConfirmModal(title, message, onConfirm) { 
-        const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; 
-        overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full relative"><h3 class="text-lg font-bold mb-2 text-slate-800">${title}</h3><p class="text-slate-600 mb-6">${message}</p><div class="flex gap-3 justify-end"><button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600" id="confirmBtn">ยืนยัน</button></div></div>`; 
-        document.body.appendChild(overlay);
-        document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); }; 
-        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-    }
-    
+    function showToast(message, type = 'success') { const toast = document.createElement('div'); toast.className = `toast toast-${type}`; toast.textContent = message; document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000); }
+    function showConfirmModal(title, message, onConfirm) { const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full relative"><h3 class="text-lg font-bold mb-2 text-slate-800">${title}</h3><p class="text-slate-600 mb-6">${message}</p><div class="flex gap-3 justify-end"><button class="px-4 py-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button class="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600" id="confirmBtn">ยืนยัน</button></div></div>`; document.body.appendChild(overlay); document.getElementById('confirmBtn').onclick = () => { onConfirm(); overlay.remove(); }; overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); }; }
     function findItem(array, id) { return array.find(item => item.id === id); }
+    function showEditModal(title, formHtml, onSave) { const existing = document.getElementById('genericModalOverlay'); if (existing) existing.remove(); const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.id = 'genericModalOverlay'; overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-slate-800">${title}</h3><button onclick="this.closest('.loading-overlay').remove()" class="text-slate-400 hover:text-slate-600">✕</button></div><form id="editForm" class="space-y-4"><div class="space-y-4">${formHtml}</div><div class="flex gap-3 pt-4 mt-4 border-t"><button type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-medium" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600" id="saveEditBtn">บันทึก</button></div></form></div>`; document.body.appendChild(overlay); document.getElementById('editForm').onsubmit = async (e) => { e.preventDefault(); const btn = document.getElementById('saveEditBtn'); btn.disabled = true; btn.textContent = 'บันทึก...'; await onSave(); overlay.remove(); }; overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); }; }
 
-    function showEditModal(title, formHtml, onSave) {
-      const existing = document.getElementById('genericModalOverlay'); if (existing) existing.remove();
-      const overlay = document.createElement('div'); overlay.className = 'loading-overlay'; overlay.id = 'genericModalOverlay';
-      overlay.innerHTML = `<div class="bg-white p-6 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-slate-800">${title}</h3><button onclick="this.closest('.loading-overlay').remove()" class="text-slate-400 hover:text-slate-600">✕</button></div><form id="editForm" class="space-y-4"><div class="space-y-4">${formHtml}</div><div class="flex gap-3 pt-4 mt-4 border-t"><button type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-medium" onclick="this.closest('.loading-overlay').remove()">ยกเลิก</button><button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-500 text-white font-medium hover:bg-emerald-600" id="saveEditBtn">บันทึก</button></div></form></div>`;
-      document.body.appendChild(overlay);
-      document.getElementById('editForm').onsubmit = async (e) => { e.preventDefault(); const btn = document.getElementById('saveEditBtn'); btn.disabled = true; btn.textContent = 'บันทึก...'; await onSave(); overlay.remove(); };
-      overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-    }
-
-    function navigateTo(sectionId) {
-      document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active')); document.getElementById(sectionId).classList.add('active');
-      updateNavUI(sectionId);
-      
-      if (sectionId === 'books') updateBooksTable(); if (sectionId === 'members') updateMembersTable();
-      if (sectionId === 'history') updateHistoryTable();
-      if (sectionId === 'borrow') { updateAvailableBooksList(); const t = new Date();
-      const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0];
-      }
-      if (sectionId === 'return') updateBorrowedBooksList(); if (sectionId === 'dashboard') updateAvailableBooksListPublic();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // ... (Navigation & View Update functions) ...
+    function navigateTo(sectionId) { document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active')); document.getElementById(sectionId).classList.add('active'); updateNavUI(sectionId); if (sectionId === 'books') updateBooksTable(); if (sectionId === 'members') updateMembersTable(); if (sectionId === 'history') updateHistoryTable(); if (sectionId === 'borrow') { updateAvailableBooksList(); const t = new Date(); const d = new Date(); d.setDate(d.getDate()+LOAN_DAYS); document.getElementById('borrowDate').value = t.toISOString().split('T')[0]; document.getElementById('dueDate').value = d.toISOString().split('T')[0]; } if (sectionId === 'return') updateBorrowedBooksList(); if (sectionId === 'dashboard') updateAvailableBooksListPublic(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     function updateMemberOptions() { const dl = document.getElementById('memberOptions'); if(dl) dl.innerHTML = members.map(m => `<option value="${m.id} : ${m.name}">`).join(''); }
-
-    function updateAllViews() {
-      updateDashboardStats();
-      updateAvailableBooksListPublic(); 
-      updateMemberOptions();
-      updateCharts();
-      if (isAdmin) { 
-          updateBooksTable(); updateMembersTable(); updateHistoryTable(); updateAvailableBooksList(); updateBorrowedBooksList();
-      }
-    }
+    function updateAllViews() { updateDashboardStats(); updateAvailableBooksListPublic(); updateMemberOptions(); updateCharts(); if (isAdmin) { updateBooksTable(); updateMembersTable(); updateHistoryTable(); updateAvailableBooksList(); updateBorrowedBooksList(); } }
 
     function updateDashboardStats() {
       const totalAvailable = books.reduce((s, b) => s + parseInt(b.available), 0);
@@ -562,8 +563,9 @@
         overdueList.innerHTML = overdue.map(item => {
           const book = books.find(b => b.id === item.bookId); const member = members.find(m => m.id === item.memberId);
           const daysOverdue = Math.floor((new Date() - new Date(item.dueDate)) / (1000 * 60 * 60 * 24));
-          // แก้ไข: ใช้ formatThaiDate
-          return `<div class="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center"><div class="overflow-hidden"><div class="font-bold text-slate-800 truncate">${book ? book.title : item.bookId}</div><div class="text-sm text-slate-500">${member ? member.name : item.memberId}</div><div class="text-xs text-red-400 mt-1">กำหนด: ${formatThaiDate(item.dueDate)}</div></div><span class="px-3 py-1 bg-white text-red-500 text-xs font-bold rounded-full shadow-sm whitespace-nowrap">เกิน ${daysOverdue} วัน</span></div>`;
+          const cat = book ? book.category : 'อื่นๆ';
+          const titleColor = getTitleColorClass(cat);
+          return `<div class="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center"><div class="overflow-hidden"><div class="font-bold ${titleColor} truncate">${book ? book.title : item.bookId}</div><div class="text-sm text-slate-500">${member ? member.name : item.memberId}</div><div class="text-xs text-red-400 mt-1">กำหนด: ${formatThaiDate(item.dueDate)}</div></div><span class="px-3 py-1 bg-white text-red-500 text-xs font-bold rounded-full shadow-sm whitespace-nowrap">เกิน ${daysOverdue} วัน</span></div>`;
         }).join('');
       }
     }
@@ -574,7 +576,29 @@
         let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)) && (!cat || b.category === cat));
         const container = document.getElementById('availableBooksListPublic');
         if (list.length === 0) { container.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-10 text-slate-400"><i class="ph ph-books text-4xl mb-2"></i><span>ไม่พบหนังสือที่ค้นหา</span></div>'; return; }
-        container.innerHTML = list.map(b => `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group"><div class="flex justify-between items-start mb-2"><div class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md">${b.category}</div><span class="text-xs text-slate-400 font-semibold">${b.id}</span></div><h4 class="font-bold text-slate-800 mb-1 line-clamp-2 group-hover:text-emerald-600 transition">${b.title}</h4><p class="text-sm text-slate-500 mb-3">${b.author}</p><div class="flex justify-between items-center pt-3 border-t border-slate-50"><span class="text-xs text-slate-400">คงเหลือ</span><span class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">${b.available} เล่ม</span></div></div>`).join('');
+        
+        container.innerHTML = list.map(b => {
+            const badgeColor = categoryColors[b.category] || 'bg-slate-100 text-slate-700';
+            const titleColor = categoryTitleColors[b.category] || 'text-slate-700';
+            
+            return `
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-full">
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <span class="${badgeColor} px-3 py-1 rounded-xl text-[11px] font-bold tracking-wide">${b.category}</span>
+                        <span class="text-xs font-bold text-slate-400 tracking-wider">${b.id}</span>
+                    </div>
+                    <h3 class="text-lg font-bold ${titleColor} mb-1 line-clamp-2 leading-tight transition-colors">${b.title}</h3>
+                    <p class="text-sm text-slate-400 font-medium">${b.author}</p>
+                </div>
+                <div class="flex justify-between items-end mt-6 pt-4 border-t border-slate-50">
+                    <span class="text-xs text-slate-400 font-medium">คงเหลือ</span>
+                    <span class="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm shadow-emerald-200">
+                        ${b.available} เล่ม
+                    </span>
+                </div>
+            </div>`;
+        }).join('');
     }
     function searchAvailableBooksPublic() { updateAvailableBooksListPublic(); }
 
@@ -613,7 +637,15 @@
         const btn = document.getElementById('borrowSubmitBtn');
         if (borrowCart.length === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-slate-400">ยังไม่มีรายการหนังสือ</td></tr>';
         btn.innerHTML = '📖 ยืนยันการยืมหนังสือ'; return; }
-        tbody.innerHTML = borrowCart.map((b, i) => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ">${b.title}</td><td data-label="จัดการ" class="text-center"><button type="button" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition" onclick="removeFromCart(${i})"><i class="ph ph-trash"></i> ลบ</button></td></tr>`).join('');
+        
+        tbody.innerHTML = borrowCart.map((b, i) => {
+            const titleColor = getTitleColorClass(b.category);
+            return `<tr>
+                <td data-label="รหัส">${b.id}</td>
+                <td data-label="ชื่อหนังสือ" class="${titleColor} font-bold">${b.title}</td>
+                <td data-label="จัดการ" class="text-center"><button type="button" class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition" onclick="removeFromCart(${i})"><i class="ph ph-trash"></i> ลบ</button></td>
+            </tr>`;
+        }).join('');
         btn.innerHTML = `📖 ยืนยันการยืม (${borrowCart.length} เล่ม)`;
     }
 
@@ -649,10 +681,11 @@
       });
     }
 
+    // ... (Edit History/Book/Member functions remain mostly same, just check for color application where needed)
     function editHistory(rid) {
         const r = borrowRecords.find(i => i.id === rid); if (!r) return;
         const m = members.find(k => k.id === r.memberId); const mName = m ? m.name : '-';
-        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="space-y-3"><div class="grid grid-cols-2 gap-2"><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">รหัสรายการ</label><div class="font-mono text-sm font-semibold text-slate-600">${r.id}</div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">ผู้ยืม</label><div class="text-sm truncate">${mName}</div></div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">หนังสือ</label><div class="text-sm font-medium">${r.bookTitle}</div></div><div><label class="text-sm font-semibold">วันที่ยืม</label><input type="date" id="editBorrowDate" value="${r.borrowDate}" class="w-full p-2 border rounded mt-1"></div><div><label class="text-sm font-semibold">กำหนดคืน</label><input type="date" id="editDueDate" value="${r.dueDate}" class="w-full p-2 border rounded mt-1"></div><div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><label class="text-sm font-semibold text-blue-700">วันที่คืน (ถ้ามี)</label><input type="date" id="editReturnDate" value="${r.returnDate || ''}" class="w-full p-2 border border-blue-200 rounded mt-1 bg-white"></div></div>`;
+        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="space-y-3"><div class="grid grid-cols-2 gap-2"><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">รหัสรายการ</label><div class="text-sm font-semibold text-slate-600">${r.id}</div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">ผู้ยืม</label><div class="text-sm truncate">${mName}</div></div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">หนังสือ</label><div class="text-sm font-medium">${r.bookTitle}</div></div><div><label class="text-sm font-semibold">วันที่ยืม</label><input type="date" id="editBorrowDate" value="${r.borrowDate}" class="w-full p-2 border rounded mt-1"></div><div><label class="text-sm font-semibold">กำหนดคืน</label><input type="date" id="editDueDate" value="${r.dueDate}" class="w-full p-2 border rounded mt-1"></div><div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><label class="text-sm font-semibold text-blue-700">วันที่คืน (ถ้ามี)</label><input type="date" id="editReturnDate" value="${r.returnDate || ''}" class="w-full p-2 border border-blue-200 rounded mt-1 bg-white"></div></div>`;
         showEditModal(`✏️ แก้ไขประวัติ`, html, updateHistoryDetails);
     }
     async function updateHistoryDetails() {
@@ -698,12 +731,26 @@
     function deleteBook(id) { const b = books.find(i => i.id === id); if (!b) return; if (borrowRecords.some(r => r.bookId === id && r.status === 'borrowed')) { showToast('หนังสือถูกยืมอยู่', 'error'); return; } showConfirmModal('ลบหนังสือ', `ลบ: ${b.title}?`, async () => { const s = await deleteFromSheets('books', id); if (s) { books = books.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } }); }
     function deleteMember(id) { const m = members.find(i => i.id === id); if (!m) return; if (borrowRecords.some(r => r.memberId === id && r.status === 'borrowed')) { showToast('สมาชิกยืมของอยู่', 'error'); return; } showConfirmModal('ลบสมาชิก', `ลบ: ${m.name}?`, async () => { const s = await deleteFromSheets('members', id); if (s) { members = members.filter(i => i.id !== id); updateAllViews(); showToast('ลบสำเร็จ', 'success'); } }); }
 
+    // --- Admin Views Update (APPLY COLORS HERE) ---
     function updateBooksTable() {
       const term = document.getElementById('searchBooks')?.value.toLowerCase() || '';
       const list = books.filter(b => b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term));
       const tbody = document.getElementById('booksTableBody');
       if (list.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-slate-400">ยังไม่มีหนังสือ</td></tr>`; return; }
-      tbody.innerHTML = list.map(b => `<tr><td data-label="รหัส">${b.id}</td><td data-label="ชื่อหนังสือ"><div class="font-medium">${b.title}</div></td><td data-label="ผู้แต่ง">${b.author}</td><td data-label="หมวดหมู่"><span class="px-2 py-1 bg-slate-100 rounded text-xs">${b.category}</span></td><td data-label="ISBN" class="text-xs text-slate-500">${b.isbn||'-'}</td><td data-label="จำนวน">${b.quantity}</td><td data-label="เหลือ" class="font-bold ${parseInt(b.available)>0?'text-emerald-600':'text-red-500'}">${b.available}</td><td data-label="จัดการ"><div class="action-button-group flex gap-2"><button class="p-2 text-blue-600 hover:bg-blue-50 rounded" onclick="editBook('${b.id}')"><i class="ph ph-pencil-simple"></i></button><button class="p-2 text-red-600 hover:bg-red-50 rounded" onclick="deleteBook('${b.id}')"><i class="ph ph-trash"></i></button></div></td></tr>`).join('');
+      
+      tbody.innerHTML = list.map(b => {
+          const titleColor = getTitleColorClass(b.category);
+          return `<tr>
+            <td data-label="รหัส">${b.id}</td>
+            <td data-label="ชื่อหนังสือ"><div class="font-bold ${titleColor}">${b.title}</div></td>
+            <td data-label="ผู้แต่ง">${b.author}</td>
+            <td data-label="หมวดหมู่"><span class="px-2 py-1 bg-slate-100 rounded text-xs">${b.category}</span></td>
+            <td data-label="ISBN" class="text-xs text-slate-500">${b.isbn||'-'}</td>
+            <td data-label="จำนวน">${b.quantity}</td>
+            <td data-label="เหลือ" class="font-bold ${parseInt(b.available)>0?'text-emerald-600':'text-red-500'}">${b.available}</td>
+            <td data-label="จัดการ"><div class="action-button-group flex gap-2"><button class="p-2 text-blue-600 hover:bg-blue-50 rounded" onclick="editBook('${b.id}')"><i class="ph ph-pencil-simple"></i></button><button class="p-2 text-red-600 hover:bg-red-50 rounded" onclick="deleteBook('${b.id}')"><i class="ph ph-trash"></i></button></div></td>
+          </tr>`;
+      }).join('');
     }
 
     function updateMembersTable() {
@@ -728,17 +775,45 @@
       tbody.innerHTML = list.map(r => {
         let badge = '', cls = ''; const m = members.find(i => i.id === r.memberId); const mName = m ? m.name : '-';
         if (r.status === 'returned') { badge = 'คืนแล้ว'; cls = 'bg-blue-100 text-blue-700'; } else if (new Date(r.dueDate) < new Date()) { badge = 'เกินกำหนด'; cls = 'bg-red-100 text-red-700'; } else { badge = 'กำลังยืม'; cls = 'bg-emerald-100 text-emerald-700'; }
-        // แก้ไข: ใช้ formatThaiDate
-        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม" class="font-medium text-slate-800">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ" class="text-sm">${r.bookTitle}</td><td data-label="วันที่ยืม">${formatThaiDate(r.borrowDate)}</td><td data-label="กำหนดคืน">${formatThaiDate(r.dueDate)}</td><td data-label="วันที่คืน">${r.returnDate ? formatThaiDate(r.returnDate) : '-'}</td><td data-label="สถานะ"><span class="px-2 py-1 rounded-full text-xs font-bold ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2 items-center"><button class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-2 py-1 rounded font-bold" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
+        
+        // Find category color for history item
+        const book = books.find(b => b.id === r.bookId);
+        const cat = book ? book.category : 'อื่นๆ';
+        const titleColor = getTitleColorClass(cat);
+
+        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม" class="font-medium text-slate-800">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ" class="text-sm font-bold ${titleColor}">${r.bookTitle}</td><td data-label="วันที่ยืม">${formatThaiDate(r.borrowDate)}</td><td data-label="กำหนดคืน">${formatThaiDate(r.dueDate)}</td><td data-label="วันที่คืน">${r.returnDate ? formatThaiDate(r.returnDate) : '-'}</td><td data-label="สถานะ"><span class="px-2 py-1 rounded-full text-xs font-bold ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2 items-center"><button class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-2 py-1 rounded font-bold" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
       }).join('');
     }
 
+    // --- Admin Available Books List (Corrected Color) ---
     function updateAvailableBooksList() {
       const term = document.getElementById('searchAvailableBooks')?.value.toLowerCase() || '';
       let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)));
       const container = document.getElementById('availableBooksList');
       if (list.length === 0) { container.innerHTML = '<div class="text-center py-4 text-slate-400 col-span-full">ไม่พบหนังสือ</div>'; return; }
-      container.innerHTML = list.map(b => `<div class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center group cursor-pointer hover:border-emerald-400 transition" onclick="document.getElementById('borrowBookIdInput').value='${b.id}'; addToCart();"><div><div class="font-bold text-sm text-slate-700">${b.title}</div><div class="text-xs text-slate-400">${b.id} • ${b.author}</div></div><span class="bg-white border border-slate-200 text-emerald-600 text-xs font-bold px-2 py-1 rounded-lg">${b.available}</span></div>`).join('');
+      
+      container.innerHTML = list.map(b => {
+          const badgeColor = categoryColors[b.category] || 'bg-slate-100 text-slate-700';
+          const titleColor = getTitleColorClass(b.category);
+          
+          return `
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-full" onclick="document.getElementById('borrowBookIdInput').value='${b.id}'; addToCart();">
+              <div>
+                  <div class="flex justify-between items-start mb-4">
+                      <span class="${badgeColor} px-3 py-1 rounded-xl text-[11px] font-bold tracking-wide">${b.category}</span>
+                      <span class="text-xs font-bold text-slate-400 tracking-wider">${b.id}</span>
+                  </div>
+                  <h3 class="text-lg font-bold ${titleColor} mb-1 line-clamp-2 leading-tight transition-colors">${b.title}</h3>
+                  <p class="text-sm text-slate-400 font-medium">${b.author}</p>
+              </div>
+              <div class="flex justify-between items-end mt-6 pt-4 border-t border-slate-50">
+                  <span class="text-xs text-slate-400 font-medium">คงเหลือ</span>
+                  <span class="bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm shadow-emerald-200">
+                      ${b.available} เล่ม
+                  </span>
+              </div>
+          </div>`;
+      }).join('');
     }
 
     function updateBorrowedBooksList() {
@@ -750,10 +825,16 @@
       list.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
       const container = document.getElementById('borrowedBooksList');
       if (list.length === 0) { container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400"><i class="ph ph-tray text-4xl mb-2"></i><br>ไม่พบรายการยืม</div>'; return; }
+      
       container.innerHTML = list.map(b => {
         const m = members.find(i => i.id === b.memberId); const isOver = new Date(b.dueDate) < new Date();
-        // แก้ไข: ใช้ formatThaiDate
-        return `<div class="bg-white p-5 rounded-2xl shadow-sm border ${isOver ? 'border-red-200' : 'border-slate-100'} hover:shadow-md transition"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">${b.memberId.substring(0,2)}</div><div><div class="font-bold text-slate-800 text-sm">${m ? m.name : b.memberId}</div><div class="text-xs text-slate-400">ผู้ยืม</div></div></div><span class="px-2 py-1 rounded text-xs font-bold ${isOver ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><h4 class="font-bold text-slate-700 mb-1">${b.bookTitle}</h4><p class="text-xs text-slate-400 mb-4">กำหนดคืน: ${formatThaiDate(b.dueDate)}</p><button onclick="returnBook('${b.id}')" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-500 hover:text-white transition flex items-center justify-center gap-2"><i class="ph ph-arrow-u-down-left"></i> รับคืนหนังสือ</button></div>`;
+        
+        // Find category color
+        const book = books.find(k => k.id === b.bookId);
+        const cat = book ? book.category : 'อื่นๆ';
+        const titleColor = getTitleColorClass(cat);
+
+        return `<div class="bg-white p-5 rounded-2xl shadow-sm border ${isOver ? 'border-red-200' : 'border-slate-100'} hover:shadow-md transition"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">${b.memberId.substring(0,2)}</div><div><div class="font-bold text-slate-800 text-sm">${m ? m.name : b.memberId}</div><div class="text-xs text-slate-400">ผู้ยืม</div></div></div><span class="px-2 py-1 rounded text-xs font-bold ${isOver ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><h4 class="font-bold ${titleColor} mb-1">${b.bookTitle}</h4><p class="text-xs text-slate-400 mb-4">กำหนดคืน: ${formatThaiDate(b.dueDate)}</p><button onclick="returnBook('${b.id}')" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-500 hover:text-white transition flex items-center justify-center gap-2"><i class="ph ph-arrow-u-down-left"></i> รับคืนหนังสือ</button></div>`;
       }).join('');
     }
 
@@ -770,10 +851,61 @@
     }
     
     function initializeCharts() {
-      const opts = { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0 } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } };
+      Chart.defaults.font.family = "'Prompt', sans-serif";
+      Chart.defaults.color = '#64748b';
+      Chart.defaults.font.size = 14;
+
+      const lineOpts = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: { font: { family: "'Prompt', sans-serif" }, precision: 0 }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: "'Prompt', sans-serif" } }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            titleFont: { family: "'Prompt', sans-serif" },
+            bodyFont: { family: "'Prompt', sans-serif" }
+          }
+        }
+      };
+
+      const barOpts = {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: { font: { family: "'Prompt', sans-serif" }, precision: 0 }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { font: { family: "'Prompt', sans-serif" }, autoSkip: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            titleFont: { family: "'Prompt', sans-serif" },
+            bodyFont: { family: "'Prompt', sans-serif" }
+          }
+        }
+      };
+
       if (charts.borrow) charts.borrow.destroy();
-      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981', borderWidth: 2, pointBackgroundColor: '#ffffff', pointBorderColor: '#10b981', fill: true, tension: 0.4 }] }, options: opts });
-      if (charts.popular) charts.popular.destroy(); charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: '#fbbf24', borderRadius: 6 }] }, options: { ...opts, indexAxis: 'y' } });
+      charts.borrow = new Chart(document.getElementById('borrowChart').getContext('2d'), { type: 'line', data: { labels: [], datasets: [{ label: 'ยืม', data: [], backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981', borderWidth: 2, pointBackgroundColor: '#ffffff', pointBorderColor: '#10b981', fill: true, tension: 0.4 }] }, options: lineOpts });
+      if (charts.popular) charts.popular.destroy(); 
+      charts.popular = new Chart(document.getElementById('popularChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'จำนวน', data: [], backgroundColor: [], borderRadius: 6 }] }, options: barOpts });
     }
 
     function updateCharts() {
@@ -786,9 +918,25 @@
         counts.push(borrowRecords.filter(b => b.borrowDate === ds).length);
       }
       charts.borrow.data.labels = last7; charts.borrow.data.datasets[0].data = counts; charts.borrow.update();
-      const bc = {}; borrowRecords.forEach(b => bc[b.bookTitle] = (bc[b.bookTitle] || 0) + 1);
-      const top = Object.entries(bc).sort((a, b) => b[1] - a[1]).slice(0, 10);
-      charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]); charts.popular.update();
+      
+      const bc = {}; 
+      borrowRecords.forEach(b => bc[b.bookTitle] = (bc[b.bookTitle] || 0) + 1);
+      const topBooks = Object.entries(bc).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      
+      const labels = topBooks.map(b => b[0]);
+      const data = topBooks.map(b => b[1]);
+      
+      // Update: Determine chart colors based on book category
+      const backgroundColors = labels.map(title => {
+          const book = books.find(b => b.title === title);
+          const category = book ? book.category : 'อื่นๆ';
+          return categoryChartColors[category] || '#cbd5e1'; 
+      });
+
+      charts.popular.data.labels = labels; 
+      charts.popular.data.datasets[0].data = data; 
+      charts.popular.data.datasets[0].backgroundColor = backgroundColors; // Apply dynamic colors
+      charts.popular.update();
     }
 
     function onConfigChange(c) { document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
