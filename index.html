@@ -418,9 +418,21 @@
     const defaultConfig = {
       library_name: "📚 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
       admin_name: "ระบบจัดการยืม-คืนหนังสืออัตโนมัติ",
-      // ปรับปรุง: เพิ่ม <br> ให้ขึ้นบรรทัดใหม่ในมือถือ และซ่อนเส้นคั่น (|) ในมือถือ
       contact_info: "© 2025 ศกร.ระดับตำบลสันติสุข <br class='block md:hidden'> <span class='hidden md:inline'>|</span> พัฒนาโดย นายยุรนันท์ ขันแข่งบุญ",
     };
+
+    // --- Helper Function: แปลงวันที่เป็นไทย (DD-MM-YYYY+543) ---
+    function formatThaiDate(dateString) {
+        if (!dateString) return '-';
+        const parts = dateString.split('-'); // แยก 2025, 06, 01
+        if (parts.length !== 3) return dateString;
+        
+        const year = parseInt(parts[0]) + 543; // แปลง ค.ศ. เป็น พ.ศ.
+        const month = parts[1];
+        const day = parts[2];
+        
+        return `${day}-${month}-${year}`;
+    }
 
     // UI Helper: Active Class Toggle
     function updateNavUI(targetId) {
@@ -443,12 +455,12 @@
     function handleLogin(e) {
         e.preventDefault(); const pwd = document.getElementById('adminPassword').value;
         if (pwd === ADMIN_PASSWORD) { isAdmin = true; document.getElementById('mainWrapper').classList.add('show-admin'); 
-        document.querySelector('.fixed.bottom-0').classList.add('show-admin'); // Mobile Nav
+        document.querySelector('.fixed.bottom-0').classList.add('show-admin'); 
         document.getElementById('adminLoginBtn').style.display = 'none'; document.getElementById('adminLogoutBtn').style.display = 'flex'; document.getElementById('loginOverlay').remove(); showToast('เข้าสู่ระบบสำเร็จ', 'success'); updateAllViews();
         } else { showToast('รหัสผ่านไม่ถูกต้อง', 'error'); }
     }
     function logout() { isAdmin = false; document.getElementById('mainWrapper').classList.remove('show-admin');
-    document.querySelector('.fixed.bottom-0').classList.remove('show-admin'); // Mobile Nav
+    document.querySelector('.fixed.bottom-0').classList.remove('show-admin'); 
     document.getElementById('adminLoginBtn').style.display = 'flex'; document.getElementById('adminLogoutBtn').style.display = 'none'; navigateTo('dashboard'); showToast('ออกจากระบบแล้ว', 'success'); }
 
     function updateConnectionStatus(status) {
@@ -550,7 +562,8 @@
         overdueList.innerHTML = overdue.map(item => {
           const book = books.find(b => b.id === item.bookId); const member = members.find(m => m.id === item.memberId);
           const daysOverdue = Math.floor((new Date() - new Date(item.dueDate)) / (1000 * 60 * 60 * 24));
-          return `<div class="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center"><div class="overflow-hidden"><div class="font-bold text-slate-800 truncate">${book ? book.title : item.bookId}</div><div class="text-sm text-slate-500">${member ? member.name : item.memberId}</div><div class="text-xs text-red-400 mt-1">กำหนด: ${item.dueDate}</div></div><span class="px-3 py-1 bg-white text-red-500 text-xs font-bold rounded-full shadow-sm whitespace-nowrap">เกิน ${daysOverdue} วัน</span></div>`;
+          // แก้ไข: ใช้ formatThaiDate
+          return `<div class="bg-red-50 p-4 rounded-xl border border-red-100 flex justify-between items-center"><div class="overflow-hidden"><div class="font-bold text-slate-800 truncate">${book ? book.title : item.bookId}</div><div class="text-sm text-slate-500">${member ? member.name : item.memberId}</div><div class="text-xs text-red-400 mt-1">กำหนด: ${formatThaiDate(item.dueDate)}</div></div><span class="px-3 py-1 bg-white text-red-500 text-xs font-bold rounded-full shadow-sm whitespace-nowrap">เกิน ${daysOverdue} วัน</span></div>`;
         }).join('');
       }
     }
@@ -561,7 +574,7 @@
         let list = books.filter(b => parseInt(b.available) > 0 && (b.id.toLowerCase().includes(term) || b.title.toLowerCase().includes(term) || b.author.toLowerCase().includes(term)) && (!cat || b.category === cat));
         const container = document.getElementById('availableBooksListPublic');
         if (list.length === 0) { container.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-10 text-slate-400"><i class="ph ph-books text-4xl mb-2"></i><span>ไม่พบหนังสือที่ค้นหา</span></div>'; return; }
-        container.innerHTML = list.map(b => `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group"><div class="flex justify-between items-start mb-2"><div class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md">${b.category}</div><span class="text-xs text-slate-400 font-mono">${b.id}</span></div><h4 class="font-bold text-slate-800 mb-1 line-clamp-2 group-hover:text-emerald-600 transition">${b.title}</h4><p class="text-sm text-slate-500 mb-3">${b.author}</p><div class="flex justify-between items-center pt-3 border-t border-slate-50"><span class="text-xs text-slate-400">คงเหลือ</span><span class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">${b.available} เล่ม</span></div></div>`).join('');
+        container.innerHTML = list.map(b => `<div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition group"><div class="flex justify-between items-start mb-2"><div class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md">${b.category}</div><span class="text-xs text-slate-400 font-semibold">${b.id}</span></div><h4 class="font-bold text-slate-800 mb-1 line-clamp-2 group-hover:text-emerald-600 transition">${b.title}</h4><p class="text-sm text-slate-500 mb-3">${b.author}</p><div class="flex justify-between items-center pt-3 border-t border-slate-50"><span class="text-xs text-slate-400">คงเหลือ</span><span class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full">${b.available} เล่ม</span></div></div>`).join('');
     }
     function searchAvailableBooksPublic() { updateAvailableBooksListPublic(); }
 
@@ -639,7 +652,7 @@
     function editHistory(rid) {
         const r = borrowRecords.find(i => i.id === rid); if (!r) return;
         const m = members.find(k => k.id === r.memberId); const mName = m ? m.name : '-';
-        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="space-y-3"><div class="grid grid-cols-2 gap-2"><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">รหัสรายการ</label><div class="font-mono text-sm">${r.id}</div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">ผู้ยืม</label><div class="text-sm truncate">${mName}</div></div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">หนังสือ</label><div class="text-sm font-medium">${r.bookTitle}</div></div><div><label class="text-sm font-semibold">วันที่ยืม</label><input type="date" id="editBorrowDate" value="${r.borrowDate}" class="w-full p-2 border rounded mt-1"></div><div><label class="text-sm font-semibold">กำหนดคืน</label><input type="date" id="editDueDate" value="${r.dueDate}" class="w-full p-2 border rounded mt-1"></div><div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><label class="text-sm font-semibold text-blue-700">วันที่คืน (ถ้ามี)</label><input type="date" id="editReturnDate" value="${r.returnDate || ''}" class="w-full p-2 border border-blue-200 rounded mt-1 bg-white"></div></div>`;
+        const html = `<input type="hidden" id="editHistoryId" value="${r.id}"><div class="space-y-3"><div class="grid grid-cols-2 gap-2"><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">รหัสรายการ</label><div class="font-mono text-sm font-semibold text-slate-600">${r.id}</div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">ผู้ยืม</label><div class="text-sm truncate">${mName}</div></div></div><div class="bg-slate-50 p-2 rounded"><label class="text-xs text-slate-400">หนังสือ</label><div class="text-sm font-medium">${r.bookTitle}</div></div><div><label class="text-sm font-semibold">วันที่ยืม</label><input type="date" id="editBorrowDate" value="${r.borrowDate}" class="w-full p-2 border rounded mt-1"></div><div><label class="text-sm font-semibold">กำหนดคืน</label><input type="date" id="editDueDate" value="${r.dueDate}" class="w-full p-2 border rounded mt-1"></div><div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><label class="text-sm font-semibold text-blue-700">วันที่คืน (ถ้ามี)</label><input type="date" id="editReturnDate" value="${r.returnDate || ''}" class="w-full p-2 border border-blue-200 rounded mt-1 bg-white"></div></div>`;
         showEditModal(`✏️ แก้ไขประวัติ`, html, updateHistoryDetails);
     }
     async function updateHistoryDetails() {
@@ -715,7 +728,8 @@
       tbody.innerHTML = list.map(r => {
         let badge = '', cls = ''; const m = members.find(i => i.id === r.memberId); const mName = m ? m.name : '-';
         if (r.status === 'returned') { badge = 'คืนแล้ว'; cls = 'bg-blue-100 text-blue-700'; } else if (new Date(r.dueDate) < new Date()) { badge = 'เกินกำหนด'; cls = 'bg-red-100 text-red-700'; } else { badge = 'กำลังยืม'; cls = 'bg-emerald-100 text-emerald-700'; }
-        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม" class="font-medium text-slate-800">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ" class="text-sm">${r.bookTitle}</td><td data-label="วันที่ยืม">${r.borrowDate}</td><td data-label="กำหนดคืน">${r.dueDate}</td><td data-label="วันที่คืน">${r.returnDate||'-'}</td><td data-label="สถานะ"><span class="px-2 py-1 rounded-full text-xs font-bold ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2 items-center"><button class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-2 py-1 rounded font-bold" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
+        // แก้ไข: ใช้ formatThaiDate
+        return `<tr><td data-label="รหัสสมาชิก">${r.memberId}</td><td data-label="ผู้ยืม" class="font-medium text-slate-800">${mName}</td><td data-label="รหัสหนังสือ">${r.bookId}</td><td data-label="ชื่อหนังสือ" class="text-sm">${r.bookTitle}</td><td data-label="วันที่ยืม">${formatThaiDate(r.borrowDate)}</td><td data-label="กำหนดคืน">${formatThaiDate(r.dueDate)}</td><td data-label="วันที่คืน">${r.returnDate ? formatThaiDate(r.returnDate) : '-'}</td><td data-label="สถานะ"><span class="px-2 py-1 rounded-full text-xs font-bold ${cls}">${badge}</span></td><td data-label="จัดการ"><div class="action-button-group flex gap-2 items-center"><button class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded" onclick="editHistory('${r.id}')">แก้ไข</button>${r.status === 'borrowed' ? `<button class="text-xs bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-2 py-1 rounded font-bold" onclick="returnBook('${r.id}')">คืน</button>` : ''}</div></td></tr>`;
       }).join('');
     }
 
@@ -738,7 +752,8 @@
       if (list.length === 0) { container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400"><i class="ph ph-tray text-4xl mb-2"></i><br>ไม่พบรายการยืม</div>'; return; }
       container.innerHTML = list.map(b => {
         const m = members.find(i => i.id === b.memberId); const isOver = new Date(b.dueDate) < new Date();
-        return `<div class="bg-white p-5 rounded-2xl shadow-sm border ${isOver ? 'border-red-200' : 'border-slate-100'} hover:shadow-md transition"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">${b.memberId.substring(0,2)}</div><div><div class="font-bold text-slate-800 text-sm">${m ? m.name : b.memberId}</div><div class="text-xs text-slate-400">ผู้ยืม</div></div></div><span class="px-2 py-1 rounded text-xs font-bold ${isOver ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><h4 class="font-bold text-slate-700 mb-1">${b.bookTitle}</h4><p class="text-xs text-slate-400 mb-4">กำหนดคืน: ${b.dueDate}</p><button onclick="returnBook('${b.id}')" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-500 hover:text-white transition flex items-center justify-center gap-2"><i class="ph ph-arrow-u-down-left"></i> รับคืนหนังสือ</button></div>`;
+        // แก้ไข: ใช้ formatThaiDate
+        return `<div class="bg-white p-5 rounded-2xl shadow-sm border ${isOver ? 'border-red-200' : 'border-slate-100'} hover:shadow-md transition"><div class="flex justify-between items-start mb-3"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold">${b.memberId.substring(0,2)}</div><div><div class="font-bold text-slate-800 text-sm">${m ? m.name : b.memberId}</div><div class="text-xs text-slate-400">ผู้ยืม</div></div></div><span class="px-2 py-1 rounded text-xs font-bold ${isOver ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">${isOver ? 'เกินกำหนด' : 'กำลังยืม'}</span></div><h4 class="font-bold text-slate-700 mb-1">${b.bookTitle}</h4><p class="text-xs text-slate-400 mb-4">กำหนดคืน: ${formatThaiDate(b.dueDate)}</p><button onclick="returnBook('${b.id}')" class="w-full py-2 rounded-xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-500 hover:text-white transition flex items-center justify-center gap-2"><i class="ph ph-arrow-u-down-left"></i> รับคืนหนังสือ</button></div>`;
       }).join('');
     }
 
@@ -776,24 +791,10 @@
       charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]); charts.popular.update();
     }
 
-    function onConfigChange(c) { 
-      document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; 
-      document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
-      
-      // *** จุดที่แก้ไข: เปลี่ยนจาก textContent เป็น innerHTML เพื่อให้ <br> ทำงาน ***
-      document.querySelector('footer p.mb-1').innerHTML = c.contact_info || defaultConfig.contact_info; 
-    }
-
-    function initializeApp() { 
-      if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
-      else onConfigChange(defaultConfig); 
-      
-      // เรียกฟังก์ชันเริ่มต้นระบบ
-      if(typeof initializeCharts === 'function') initializeCharts(); 
-      if(typeof loadDataFromSheets === 'function') loadDataFromSheets(); 
-      if(typeof updateAvailableBooksListPublic === 'function') updateAvailableBooksListPublic(); 
-    }
-
+    function onConfigChange(c) { document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
+    document.querySelector('footer p.mb-1').innerHTML = c.contact_info || defaultConfig.contact_info; }
+    function initializeApp() { if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
+    else onConfigChange(defaultConfig); initializeCharts(); loadDataFromSheets(); updateAvailableBooksListPublic(); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeApp); else initializeApp();
   </script>
 </body>
