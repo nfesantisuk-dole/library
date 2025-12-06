@@ -18,7 +18,7 @@
       theme: {
         extend: {
           fontFamily: { 
-            sans: ['Prompt', 'sans-serif'] // Set Prompt as default font
+            sans: ['Prompt', 'sans-serif'] 
           },
           colors: {
             primary: '#10b981', // Emerald 500
@@ -381,21 +381,29 @@
 
   </div>
 
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-50 px-6 py-2 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-     <button onclick="navigateTo('dashboard')" class="nav-button active flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="dashboard">
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-50 px-2 py-2 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+     <button onclick="navigateTo('dashboard')" class="nav-button active flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="dashboard">
        <i class="ph ph-house text-2xl"></i> <span class="text-[10px] font-medium">หน้าแรก</span>
      </button>
-     <button onclick="navigateTo('borrow')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="borrow">
+     
+     <button onclick="navigateTo('borrow')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="borrow">
        <i class="ph ph-hand-holding text-2xl"></i> <span class="text-[10px] font-medium">ยืม</span>
      </button>
-     <div class="w-12 h-12 -mt-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200 border-4 border-slate-50 admin-only transform hover:scale-105 transition" onclick="navigateTo('return')">
-        <i class="ph ph-scan text-2xl"></i>
-     </div>
-     <button onclick="navigateTo('books')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="books">
+     
+     <button onclick="navigateTo('return')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="return">
+       <i class="ph ph-arrow-u-down-left text-2xl"></i> <span class="text-[10px] font-medium">คืน</span>
+     </button>
+     
+     <button onclick="navigateTo('books')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="books">
        <i class="ph ph-books text-2xl"></i> <span class="text-[10px] font-medium">หนังสือ</span>
      </button>
-     <button onclick="navigateTo('members')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="members">
+     
+     <button onclick="navigateTo('members')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="members">
        <i class="ph ph-users text-2xl"></i> <span class="text-[10px] font-medium">สมาชิก</span>
+     </button>
+
+     <button onclick="navigateTo('history')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 min-w-[3.5rem] text-slate-400 hover:text-emerald-600 transition" data-target="history">
+       <i class="ph ph-clock-counter-clockwise text-2xl"></i> <span class="text-[10px] font-medium">ประวัติ</span>
      </button>
   </div>
 
@@ -410,7 +418,8 @@
     const defaultConfig = {
       library_name: "📚 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
       admin_name: "ระบบจัดการยืม-คืนหนังสืออัตโนมัติ",
-      contact_info: "@2025 ระบบยืม-คืนหนังสือ ศกร.ระดับตำบลสันติสุข",
+      // ปรับปรุง: เพิ่ม <br> ให้ขึ้นบรรทัดใหม่ในมือถือ และซ่อนเส้นคั่น (|) ในมือถือ
+      contact_info: "© 2025 ศกร.ระดับตำบลสันติสุข <br class='block md:hidden'> <span class='hidden md:inline'>|</span> พัฒนาโดย นายยุรนันท์ ขันแข่งบุญ",
     };
 
     // UI Helper: Active Class Toggle
@@ -418,12 +427,9 @@
         document.querySelectorAll('.nav-button').forEach(b => {
             b.classList.remove('text-emerald-600', 'bg-emerald-50', 'active', 'border-emerald-200');
             b.classList.add('text-slate-600', 'bg-white', 'border-transparent');
-            
-            // Check data-target
             if(b.dataset.target === targetId) {
                 b.classList.add('text-emerald-600', 'bg-emerald-50', 'active', 'border-emerald-200');
                 b.classList.remove('text-slate-600', 'bg-white', 'border-transparent');
-                // For mobile text color
                 if(b.querySelector('span')) b.querySelector('span').classList.remove('text-slate-400');
             }
         });
@@ -770,10 +776,24 @@
       charts.popular.data.labels = top.map(b => b[0]); charts.popular.data.datasets[0].data = top.map(b => b[1]); charts.popular.update();
     }
 
-    function onConfigChange(c) { document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
-    document.querySelector('footer p.mb-1').textContent = c.contact_info || defaultConfig.contact_info; }
-    function initializeApp() { if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
-    else onConfigChange(defaultConfig); initializeCharts(); loadDataFromSheets(); updateAvailableBooksListPublic(); }
+    function onConfigChange(c) { 
+      document.getElementById('headerTitle').textContent = c.library_name || defaultConfig.library_name; 
+      document.getElementById('headerSubtitle').textContent = c.admin_name || defaultConfig.admin_name;
+      
+      // *** จุดที่แก้ไข: เปลี่ยนจาก textContent เป็น innerHTML เพื่อให้ <br> ทำงาน ***
+      document.querySelector('footer p.mb-1').innerHTML = c.contact_info || defaultConfig.contact_info; 
+    }
+
+    function initializeApp() { 
+      if (typeof elementSDK !== 'undefined') elementSDK.config.onConfigChange(onConfigChange);
+      else onConfigChange(defaultConfig); 
+      
+      // เรียกฟังก์ชันเริ่มต้นระบบ
+      if(typeof initializeCharts === 'function') initializeCharts(); 
+      if(typeof loadDataFromSheets === 'function') loadDataFromSheets(); 
+      if(typeof updateAvailableBooksListPublic === 'function') updateAvailableBooksListPublic(); 
+    }
+
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initializeApp); else initializeApp();
   </script>
 </body>
