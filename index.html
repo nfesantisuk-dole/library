@@ -7,7 +7,9 @@
   
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
@@ -15,7 +17,9 @@
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Sarabun', 'sans-serif'] },
+          fontFamily: { 
+            sans: ['Prompt', 'sans-serif'] // Set Prompt as default font
+          },
           colors: {
             primary: '#10b981', // Emerald 500
             secondary: '#34d399', // Emerald 400
@@ -28,7 +32,7 @@
   </script>
 
   <style>
-    /* Custom Styles that Tailwind can't handle easily */
+    /* Custom Styles */
     body { -webkit-tap-highlight-color: transparent; }
     
     /* Scrollbar */
@@ -41,7 +45,7 @@
     .content-section { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease-in-out; }
     .content-section.active { display: block; opacity: 1; transform: translateY(0); }
 
-    /* Mobile Table Card View Magic */
+    /* Mobile Table Card View */
     @media (max-width: 768px) {
       .data-table thead { display: none; }
       .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
@@ -134,23 +138,23 @@
     </header>
 
     <nav class="hidden md:flex gap-4 mt-6 mb-8 overflow-x-auto pb-2">
-      <button onclick="navigateTo('dashboard')" class="nav-button active px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="dashboard">
-        <i class="ph ph-house text-lg"></i> หน้าแรก
+      <button onclick="navigateTo('dashboard')" class="nav-button active px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="dashboard">
+        <i class="ph ph-house text-xl group-hover:scale-110 transition-transform"></i> หน้าแรก
       </button>
-      <button onclick="navigateTo('borrow')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="borrow">
-        <i class="ph ph-hand-holding"></i> ยืมหนังสือ
+      <button onclick="navigateTo('borrow')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="borrow">
+        <i class="ph ph-hand-holding text-xl group-hover:scale-110 transition-transform"></i> ยืมหนังสือ
       </button>
-      <button onclick="navigateTo('return')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="return">
-        <i class="ph ph-arrow-u-down-left"></i> คืนหนังสือ
+      <button onclick="navigateTo('return')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="return">
+        <i class="ph ph-arrow-u-down-left text-xl group-hover:scale-110 transition-transform"></i> คืนหนังสือ
       </button>
-      <button onclick="navigateTo('books')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="books">
-        <i class="ph ph-book-bookmark"></i> จัดการหนังสือ
+      <button onclick="navigateTo('books')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="books">
+        <i class="ph ph-book-bookmark text-xl group-hover:scale-110 transition-transform"></i> จัดการหนังสือ
       </button>
-      <button onclick="navigateTo('members')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="members">
-        <i class="ph ph-users"></i> สมาชิก
+      <button onclick="navigateTo('members')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="members">
+        <i class="ph ph-users text-xl group-hover:scale-110 transition-transform"></i> สมาชิก
       </button>
-      <button onclick="navigateTo('history')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm" data-target="history">
-        <i class="ph ph-clock-counter-clockwise"></i> ประวัติ
+      <button onclick="navigateTo('history')" class="nav-button admin-only px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 bg-white text-slate-600 hover:bg-emerald-50 border border-transparent hover:border-emerald-200 shadow-sm group" data-target="history">
+        <i class="ph ph-clock-counter-clockwise text-xl group-hover:scale-110 transition-transform"></i> ประวัติ
       </button>
     </nav>
 
@@ -384,7 +388,7 @@
      <button onclick="navigateTo('borrow')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="borrow">
        <i class="ph ph-hand-holding text-2xl"></i> <span class="text-[10px] font-medium">ยืม</span>
      </button>
-     <div class="w-12 h-12 -mt-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200 border-4 border-slate-50 admin-only" onclick="navigateTo('return')">
+     <div class="w-12 h-12 -mt-8 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-emerald-200 border-4 border-slate-50 admin-only transform hover:scale-105 transition" onclick="navigateTo('return')">
         <i class="ph ph-scan text-2xl"></i>
      </div>
      <button onclick="navigateTo('books')" class="nav-button admin-only flex flex-col items-center gap-1 p-2 text-slate-400 hover:text-emerald-600 transition" data-target="books">
